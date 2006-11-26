@@ -1,0 +1,47 @@
+#!/bin/sh
+
+# load GCCVER and BINVER
+. toolvers
+
+if [ ! -d binutils-$BINVER.patched ]; then
+	echo extracting binutils-$BINVER.tar.bz2
+	rm -rf binutils-$BINVER
+	tar xjf binutils-$BINVER.tar.bz2 || exit 1
+	echo patching binutils
+	patch -d binutils-$BINVER -p1 < binutils-patch.txt || exit 1
+	rm -rf binutils-$BINVER.patched
+	mv binutils-$BINVER binutils-$BINVER.patched
+fi
+if [ ! -d gcc-$GCCVER.patched ]; then
+	echo extracting gcc-$GCCVER.tar.bz2
+	rm -rf gcc-$GCCVER
+	tar xjf gcc-$GCCVER.tar.bz2 || exit 1
+	echo patching gcc
+	patch -d gcc-$GCCVER -p1 < gcc-patch.txt || exit 1
+	rm -rf gcc-$GCCVER.patched
+	mv gcc-$GCCVER gcc-$GCCVER.patched
+fi
+
+ARCHES=arm
+for ARCH in $ARCHES; do 
+	INSTALLPATH=~/toolchains/$ARCH-elf-$GCCVER
+	BINBUILDPATH=build-binutils-$BINVER-$ARCH
+	GCCBUILDPATH=build-gcc-$GCCVER-$ARCH
+	export PATH=$INSTALLPATH/bin:$PATH
+
+	if [ ! -d $BINBUILDPATH ]; then
+		(mkdir $BINBUILDPATH &&
+		cd $BINBUILDPATH &&
+		../binutils-$BINVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH &&
+		gmake -j2 &&
+		gmake install)
+	fi
+
+	if [ ! -d $GCCBUILDPATH ]; then
+		(mkdir $GCCBUILDPATH &&
+		cd $GCCBUILDPATH &&
+		../gcc-$GCCVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH --enable-languages=c,c++ --disable-libssp &&
+		gmake -j2 &&
+		gmake install)
+	fi
+done
