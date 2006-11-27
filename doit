@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [ "x$ARCHES" = "x" ]; then
+	echo need to specify architectures to build in the ARCHES environment variable
+	echo ie. ARCHES=\"arm sh\"
+	exit 1
+fi
+
 # load GCCVER and BINVER
 . toolvers
 
@@ -22,9 +28,9 @@ if [ ! -d gcc-$GCCVER.patched ]; then
 	mv gcc-$GCCVER gcc-$GCCVER.patched
 fi
 
-ARCHES=arm
 for ARCH in $ARCHES; do 
-	INSTALLPATH=~/toolchains/$ARCH-elf-$GCCVER
+#	INSTALLPATH=~/toolchains/$ARCH-elf-$GCCVER
+	INSTALLPATH=`pwd`/$ARCH-elf-$GCCVER
 	BINBUILDPATH=build-binutils-$BINVER-$ARCH
 	GCCBUILDPATH=build-gcc-$GCCVER-$ARCH
 	export PATH=$INSTALLPATH/bin:$PATH

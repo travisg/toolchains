@@ -1,24 +1,46 @@
-diff -ru gcc-4.0.2/configure gcc-4.0.2-patched/configure
---- gcc-4.0.2/configure	2005-09-13 00:01:28.000000000 -0700
-+++ gcc-4.0.2-patched/configure	2005-11-06 23:49:44.000000000 -0800
-@@ -1265,6 +1265,7 @@
+diff -r -u gcc-4.1.1/configure gcc-4.1.1.patched/configure
+--- gcc-4.1.1/configure	2005-12-16 04:57:40.000000000 -0800
++++ gcc-4.1.1.patched/configure	2006-11-26 22:39:41.000000000 -0800
+@@ -1241,6 +1241,10 @@
+   sh-*-linux*)
+     noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
+     ;;    
++  sh-*-elf)
++    noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
++	noconfigdirs="$noconfigdirs target-libstdc++-v3"
++    ;;    
+   sh*-*-pe|mips*-*-pe|*arm-wince-pe)
+     noconfigdirs="$noconfigdirs ${libgcj}"
+     noconfigdirs="$noconfigdirs target-examples"
+@@ -1266,6 +1270,7 @@
      ;;
    arm-*-elf* | strongarm-*-elf* | xscale-*-elf* | arm*-*-eabi* )
      noconfigdirs="$noconfigdirs target-libffi target-qthreads"
 +	noconfigdirs="$noconfigdirs target-libstdc++-v3"
      ;;
-   arm*-*-symbianelf*)
-     noconfigdirs="$noconfigdirs ${libgcj} target-libiberty"
-diff -ru gcc-4.0.2/gcc/config/arm/t-arm-elf gcc-4.0.2-patched/gcc/config/arm/t-arm-elf
---- gcc-4.0.2/gcc/config/arm/t-arm-elf	2004-09-01 04:14:21.000000000 -0700
-+++ gcc-4.0.2-patched/gcc/config/arm/t-arm-elf	2005-11-06 23:44:30.000000000 -0800
+   arm*-*-linux-gnueabi)
+     noconfigdirs="$noconfigdirs target-libffi target-qthreads"
+@@ -1448,6 +1453,10 @@
+   i[3456789]86-*-beos*)
+     noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss ${libgcj}"
+     ;;
++  x86_64-*-elf)
++    noconfigdirs="$noconfigdirs ${libgcj}"
++	noconfigdirs="$noconfigdirs target-libiberty target-libstdc++-v3"
++    ;;
+   m32r-*-*)
+     noconfigdirs="$noconfigdirs ${libgcj}"
+     ;;
+diff -r -u gcc-4.1.1/gcc/config/arm/t-arm-elf gcc-4.1.1.patched/gcc/config/arm/t-arm-elf
+--- gcc-4.1.1/gcc/config/arm/t-arm-elf	2004-09-01 04:14:21.000000000 -0700
++++ gcc-4.1.1.patched/gcc/config/arm/t-arm-elf	2006-11-26 22:31:53.000000000 -0800
 @@ -11,6 +11,10 @@
  MULTILIB_EXCEPTIONS  = 
  MULTILIB_MATCHES     =
  
 +# build a bunch of specialized versions of libcc for particular cores
-+MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale
-+MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale
++MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/march=armv4/march=armv4t/march=armv5/march=armv5t/march=armv5te/march=armv6/march=armv6j/march=armv6k/march=armv6z/march=armv6zk
++MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore armv4 armv4t armv5 armv5t armv5te armv6 armv6j armv6k armv6z armv6zk
 +
  # MULTILIB_OPTIONS    += mcpu=ep9312
  # MULTILIB_DIRNAMES   += ep9312
@@ -34,3 +56,16 @@ diff -ru gcc-4.0.2/gcc/config/arm/t-arm-elf gcc-4.0.2-patched/gcc/config/arm/t-a
  # 
  # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
  # MULTILIB_DIRNAMES   += elf under
+diff -r -u gcc-4.1.1/gcc/config.gcc gcc-4.1.1.patched/gcc/config.gcc
+--- gcc-4.1.1/gcc/config.gcc	2006-05-09 13:02:29.000000000 -0700
++++ gcc-4.1.1.patched/gcc/config.gcc	2006-11-26 21:44:19.000000000 -0800
+@@ -1012,6 +1012,9 @@
+ x86_64-*-freebsd*)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h ${fbsd_tm_file} i386/x86-64.h i386/freebsd.h i386/freebsd64.h"
+ 	;;
++x86_64-*-elf*)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/x86-64.h"
++	;;
+ i[34567]86-*-netbsdelf*)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h netbsd.h netbsd-elf.h i386/netbsd-elf.h"
+ 	;;
