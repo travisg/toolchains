@@ -35,19 +35,21 @@ for ARCH in $ARCHES; do
 	GCCBUILDPATH=build-gcc-$GCCVER-$ARCH
 	export PATH=$INSTALLPATH/bin:$PATH
 
-	if [ ! -d $BINBUILDPATH ]; then
-		(mkdir $BINBUILDPATH &&
+	if [ ! -f $BINBUILDPATH/built.txt ]; then
+		(mkdir -p $BINBUILDPATH &&
 		cd $BINBUILDPATH &&
 		../binutils-$BINVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH &&
 		gmake -j2 &&
-		gmake install)
+		gmake install &&
+		touch built.txt)
 	fi
 
-	if [ ! -d $GCCBUILDPATH ]; then
-		(mkdir $GCCBUILDPATH &&
+	if [ ! -f $GCCBUILDPATH/built.txt ]; then
+		(mkdir -p $GCCBUILDPATH &&
 		cd $GCCBUILDPATH &&
 		../gcc-$GCCVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH --enable-languages=c,c++ --disable-libssp &&
 		gmake -j2 &&
-		gmake install)
+		gmake install &&
+		touch built.txt)
 	fi
 done
