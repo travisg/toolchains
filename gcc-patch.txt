@@ -1,7 +1,7 @@
-diff -r -u gcc-4.1.1/configure gcc-4.1.1.patched/configure
---- gcc-4.1.1/configure	2005-12-16 04:57:40.000000000 -0800
-+++ gcc-4.1.1.patched/configure	2006-11-26 22:39:41.000000000 -0800
-@@ -1241,6 +1241,10 @@
+diff -ruN gcc-4.2.0/configure gcc-4.2.0.patched/configure
+--- gcc-4.2.0/configure	2007-05-13 20:19:11.000000000 -0700
++++ gcc-4.2.0.patched/configure	2007-06-23 10:27:35.000000000 -0700
+@@ -1295,6 +1295,10 @@
    sh-*-linux*)
      noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
      ;;    
@@ -12,7 +12,7 @@ diff -r -u gcc-4.1.1/configure gcc-4.1.1.patched/configure
    sh*-*-pe|mips*-*-pe|*arm-wince-pe)
      noconfigdirs="$noconfigdirs ${libgcj}"
      noconfigdirs="$noconfigdirs target-examples"
-@@ -1266,6 +1270,7 @@
+@@ -1320,6 +1324,7 @@
      ;;
    arm-*-elf* | strongarm-*-elf* | xscale-*-elf* | arm*-*-eabi* )
      noconfigdirs="$noconfigdirs target-libffi target-qthreads"
@@ -20,9 +20,9 @@ diff -r -u gcc-4.1.1/configure gcc-4.1.1.patched/configure
      ;;
    arm*-*-linux-gnueabi)
      noconfigdirs="$noconfigdirs target-libffi target-qthreads"
-@@ -1448,6 +1453,10 @@
-   i[3456789]86-*-beos*)
-     noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss ${libgcj}"
+@@ -1494,6 +1499,10 @@
+   i[3456789]86-*-rdos*)
+     noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss"
      ;;
 +  x86_64-*-elf)
 +    noconfigdirs="$noconfigdirs ${libgcj}"
@@ -31,9 +31,9 @@ diff -r -u gcc-4.1.1/configure gcc-4.1.1.patched/configure
    m32r-*-*)
      noconfigdirs="$noconfigdirs ${libgcj}"
      ;;
-diff -r -u gcc-4.1.1/gcc/config/arm/t-arm-elf gcc-4.1.1.patched/gcc/config/arm/t-arm-elf
---- gcc-4.1.1/gcc/config/arm/t-arm-elf	2004-09-01 04:14:21.000000000 -0700
-+++ gcc-4.1.1.patched/gcc/config/arm/t-arm-elf	2006-11-26 22:31:53.000000000 -0800
+diff -ruN gcc-4.2.0/gcc/config/arm/t-arm-elf gcc-4.2.0.patched/gcc/config/arm/t-arm-elf
+--- gcc-4.2.0/gcc/config/arm/t-arm-elf	2006-11-06 04:13:53.000000000 -0800
++++ gcc-4.2.0.patched/gcc/config/arm/t-arm-elf	2007-06-23 10:27:35.000000000 -0700
 @@ -11,6 +11,10 @@
  MULTILIB_EXCEPTIONS  = 
  MULTILIB_MATCHES     =
@@ -56,15 +56,41 @@ diff -r -u gcc-4.1.1/gcc/config/arm/t-arm-elf gcc-4.1.1.patched/gcc/config/arm/t
  # 
  # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
  # MULTILIB_DIRNAMES   += elf under
-diff -r -u gcc-4.1.1/gcc/config.gcc gcc-4.1.1.patched/gcc/config.gcc
---- gcc-4.1.1/gcc/config.gcc	2006-05-09 13:02:29.000000000 -0700
-+++ gcc-4.1.1.patched/gcc/config.gcc	2006-11-26 21:44:19.000000000 -0800
-@@ -1012,6 +1012,9 @@
+diff -ruN gcc-4.2.0/gcc/config/i386/t-x86_64elf gcc-4.2.0.patched/gcc/config/i386/t-x86_64elf
+--- gcc-4.2.0/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
++++ gcc-4.2.0.patched/gcc/config/i386/t-x86_64elf	2007-07-19 00:12:21.000000000 -0700
+@@ -0,0 +1,21 @@
++# On x86-64 we do not need any exports for glibc for 64-bit libgcc_s,
++# override the settings
++# from t-slibgcc-elf-ver and t-linux
++#SHLIB_MAPFILES = $(srcdir)/libgcc-std.ver \
++#		 $(srcdir)/config/i386/libgcc-x86_64-glibc.ver
++
++MULTILIB_OPTIONS = m64/m32
++MULTILIB_DIRNAMES = 64 32 
++MULTILIB_OSDIRNAMES = ../lib64 ../lib
++
++LIBGCC = stmp-multilib
++INSTALL_LIBGCC = install-multilib
++
++#EXTRA_MULTILIB_PARTS=crtbegin.o crtend.o crtbeginS.o crtendS.o \
++#		     crtbeginT.o crtfastmath.o
++
++# The pushl in CTOR initialization interferes with frame pointer elimination.
++# crtend*.o cannot be compiled without -fno-asynchronous-unwind-tables,
++# because then __FRAME_END__ might not be the last thing in .eh_frame
++# section.
++#CRTSTUFF_T_CFLAGS = -fno-omit-frame-pointer -fno-asynchronous-unwind-tables
+diff -ruN gcc-4.2.0/gcc/config.gcc gcc-4.2.0.patched/gcc/config.gcc
+--- gcc-4.2.0/gcc/config.gcc	2007-02-02 21:25:20.000000000 -0800
++++ gcc-4.2.0.patched/gcc/config.gcc	2007-07-19 00:11:23.000000000 -0700
+@@ -1059,6 +1059,10 @@
  x86_64-*-freebsd*)
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h ${fbsd_tm_file} i386/x86-64.h i386/freebsd.h i386/freebsd64.h"
  	;;
 +x86_64-*-elf*)
 +	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/x86-64.h"
++	tmake_file="i386/t-x86_64elf"
 +	;;
  i[34567]86-*-netbsdelf*)
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h netbsd.h netbsd-elf.h i386/netbsd-elf.h"
