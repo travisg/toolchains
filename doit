@@ -1,5 +1,8 @@
 #!/bin/sh
 
+OS=`uname`
+HOSTARCH=`uname -m`
+
 if [ "x$ARCHES" = "x" ]; then
 	echo need to specify architectures to build in the ARCHES environment variable
 	echo ie. ARCHES=\"arm sh\"
@@ -30,15 +33,16 @@ fi
 
 for ARCH in $ARCHES; do 
 #	INSTALLPATH=~/toolchains/$ARCH-elf-$GCCVER
-	INSTALLPATH=`pwd`/$ARCH-elf-$GCCVER
-	BINBUILDPATH=build-binutils-$BINVER-$ARCH
-	GCCBUILDPATH=build-gcc-$GCCVER-$ARCH
+	INSTALLPATH=`pwd`/$ARCH-elf-$GCCVER-$OS-$HOSTARCH
+	BINBUILDPATH=build-binutils-$BINVER-$ARCH-$OS-$HOSTARCH
+	GCCBUILDPATH=build-gcc-$GCCVER-$ARCH-$OS-$HOSTARCH
 	export PATH=$INSTALLPATH/bin:$PATH
 
 	if [ ! -f $BINBUILDPATH/built.txt ]; then
 		(mkdir -p $BINBUILDPATH &&
 		cd $BINBUILDPATH &&
 		../binutils-$BINVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH &&
+		gmake configure-host &&
 		gmake -j2 &&
 		gmake install &&
 		touch built.txt)
@@ -48,6 +52,7 @@ for ARCH in $ARCHES; do
 		(mkdir -p $GCCBUILDPATH &&
 		cd $GCCBUILDPATH &&
 		../gcc-$GCCVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH --enable-languages=c,c++ --disable-libssp &&
+		gmake configure-host &&
 		gmake -j2 &&
 		gmake install &&
 		touch built.txt)
