@@ -1,7 +1,7 @@
-diff -r -u binutils-2.17/bfd/elf32-arm.c binutils-2.17.patched/bfd/elf32-arm.c
---- binutils-2.17/bfd/elf32-arm.c	2006-05-02 06:35:48.000000000 -0700
-+++ binutils-2.17.patched/bfd/elf32-arm.c	2006-11-15 14:02:48.000000000 -0800
-@@ -8085,7 +8085,8 @@
+diff -ruN binutils-2.18/bfd/elf32-arm.c binutils-2.18.patched/bfd/elf32-arm.c
+--- binutils-2.18/bfd/elf32-arm.c	2007-08-06 12:59:23.000000000 -0700
++++ binutils-2.18.patched/bfd/elf32-arm.c	2007-11-25 13:44:00.000000000 -0800
+@@ -10136,7 +10136,8 @@
  #ifdef __QNXTARGET__
  #define ELF_MAXPAGESIZE			0x1000
  #else
@@ -10,4 +10,4 @@ diff -r -u binutils-2.17/bfd/elf32-arm.c binutils-2.17.patched/bfd/elf32-arm.c
 +#define ELF_MAXPAGESIZE			0x1000 /* align to 4K boundaries by default */
  #endif
  #define ELF_MINPAGESIZE			0x1000
- 
+ #define ELF_COMMONPAGESIZE		0x1000

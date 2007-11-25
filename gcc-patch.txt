@@ -1,6 +1,6 @@
 diff -ruN gcc-4.2.2/configure gcc-4.2.2.patched/configure
 --- gcc-4.2.2/configure	2007-09-14 17:42:24.000000000 -0700
-+++ gcc-4.2.2.patched/configure	2007-11-25 13:56:07.000000000 -0800
++++ gcc-4.2.2.patched/configure	2007-11-25 14:09:56.000000000 -0800
 @@ -1295,6 +1295,10 @@
    sh-*-linux*)
      noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
@@ -20,7 +20,15 @@ diff -ruN gcc-4.2.2/configure gcc-4.2.2.patched/configure
      ;;
    arm*-*-linux-gnueabi)
      noconfigdirs="$noconfigdirs target-libffi target-qthreads"
-@@ -1494,6 +1499,10 @@
+@@ -1434,6 +1439,7 @@
+     ;;
+   i[3456789]86-*-coff | i[3456789]86-*-elf)
+     noconfigdirs="$noconfigdirs ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libstdc++-v3"
+     ;;
+   i[3456789]86-*-linux*)
+     # The GCC port for glibc1 has no MD_FALLBACK_FRAME_STATE_FOR, so let's
+@@ -1494,6 +1500,10 @@
    i[3456789]86-*-rdos*)
      noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss"
      ;;
@@ -31,7 +39,7 @@ diff -ruN gcc-4.2.2/configure gcc-4.2.2.patched/configure
    m32r-*-*)
      noconfigdirs="$noconfigdirs ${libgcj}"
      ;;
-@@ -1544,6 +1553,10 @@
+@@ -1544,6 +1554,10 @@
    powerpc-*-eabi)
      noconfigdirs="$noconfigdirs ${libgcj}"
      ;;
