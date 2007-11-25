@@ -1,6 +1,6 @@
-diff -ruN gcc-4.2.0/configure gcc-4.2.0.patched/configure
---- gcc-4.2.0/configure	2007-05-13 20:19:11.000000000 -0700
-+++ gcc-4.2.0.patched/configure	2007-06-23 10:27:35.000000000 -0700
+diff -ruN gcc-4.2.2/configure gcc-4.2.2.patched/configure
+--- gcc-4.2.2/configure	2007-09-14 17:42:24.000000000 -0700
++++ gcc-4.2.2.patched/configure	2007-11-25 13:56:07.000000000 -0800
 @@ -1295,6 +1295,10 @@
    sh-*-linux*)
      noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
@@ -31,9 +31,20 @@ diff -ruN gcc-4.2.0/configure gcc-4.2.0.patched/configure
    m32r-*-*)
      noconfigdirs="$noconfigdirs ${libgcj}"
      ;;
-diff -ruN gcc-4.2.0/gcc/config/arm/t-arm-elf gcc-4.2.0.patched/gcc/config/arm/t-arm-elf
---- gcc-4.2.0/gcc/config/arm/t-arm-elf	2006-11-06 04:13:53.000000000 -0800
-+++ gcc-4.2.0.patched/gcc/config/arm/t-arm-elf	2007-06-23 10:27:35.000000000 -0700
+@@ -1544,6 +1553,10 @@
+   powerpc-*-eabi)
+     noconfigdirs="$noconfigdirs ${libgcj}"
+     ;;
++  powerpc-*-elf)
++    noconfigdirs="$noconfigdirs ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libstdc++-v3"
++    ;;
+   powerpc-*-eabi* | powerpcle-*-eabi* | powerpc-*-rtems* )
+     ;;
+   rs6000-*-lynxos*)
+diff -ruN gcc-4.2.2/gcc/config/arm/t-arm-elf gcc-4.2.2.patched/gcc/config/arm/t-arm-elf
+--- gcc-4.2.2/gcc/config/arm/t-arm-elf	2006-11-06 04:13:53.000000000 -0800
++++ gcc-4.2.2.patched/gcc/config/arm/t-arm-elf	2007-11-25 13:44:12.000000000 -0800
 @@ -11,6 +11,10 @@
  MULTILIB_EXCEPTIONS  = 
  MULTILIB_MATCHES     =
@@ -56,9 +67,9 @@ diff -ruN gcc-4.2.0/gcc/config/arm/t-arm-elf gcc-4.2.0.patched/gcc/config/arm/t-
  # 
  # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
  # MULTILIB_DIRNAMES   += elf under
-diff -ruN gcc-4.2.0/gcc/config/i386/t-x86_64elf gcc-4.2.0.patched/gcc/config/i386/t-x86_64elf
---- gcc-4.2.0/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc-4.2.0.patched/gcc/config/i386/t-x86_64elf	2007-07-19 00:12:21.000000000 -0700
+diff -ruN gcc-4.2.2/gcc/config/i386/t-x86_64elf gcc-4.2.2.patched/gcc/config/i386/t-x86_64elf
+--- gcc-4.2.2/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
++++ gcc-4.2.2.patched/gcc/config/i386/t-x86_64elf	2007-11-25 13:44:12.000000000 -0800
 @@ -0,0 +1,21 @@
 +# On x86-64 we do not need any exports for glibc for 64-bit libgcc_s,
 +# override the settings
@@ -81,10 +92,10 @@ diff -ruN gcc-4.2.0/gcc/config/i386/t-x86_64elf gcc-4.2.0.patched/gcc/config/i38
 +# because then __FRAME_END__ might not be the last thing in .eh_frame
 +# section.
 +#CRTSTUFF_T_CFLAGS = -fno-omit-frame-pointer -fno-asynchronous-unwind-tables
-diff -ruN gcc-4.2.0/gcc/config.gcc gcc-4.2.0.patched/gcc/config.gcc
---- gcc-4.2.0/gcc/config.gcc	2007-02-02 21:25:20.000000000 -0800
-+++ gcc-4.2.0.patched/gcc/config.gcc	2007-07-19 00:11:23.000000000 -0700
-@@ -1059,6 +1059,10 @@
+diff -ruN gcc-4.2.2/gcc/config.gcc gcc-4.2.2.patched/gcc/config.gcc
+--- gcc-4.2.2/gcc/config.gcc	2007-09-01 08:28:30.000000000 -0700
++++ gcc-4.2.2.patched/gcc/config.gcc	2007-11-25 13:44:12.000000000 -0800
+@@ -1058,6 +1058,10 @@
  x86_64-*-freebsd*)
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h ${fbsd_tm_file} i386/x86-64.h i386/freebsd.h i386/freebsd64.h"
  	;;
