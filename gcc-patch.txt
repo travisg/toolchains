@@ -1,34 +1,42 @@
-diff -ruN gcc-4.2.2/configure gcc-4.2.2.patched/configure
---- gcc-4.2.2/configure	2007-09-14 17:42:24.000000000 -0700
-+++ gcc-4.2.2.patched/configure	2007-11-25 14:09:56.000000000 -0800
-@@ -1295,6 +1295,10 @@
+diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
+--- gcc-4.3.2/configure	2008-02-01 19:29:30.000000000 -0800
++++ gcc-4.3.2.patched/configure	2008-12-25 08:59:11.000000000 -0800
+@@ -2141,6 +2141,7 @@
+     noconfigdirs="$noconfigdirs ld gas gdb gprof"
+     noconfigdirs="$noconfigdirs sim target-rda"
+     noconfigdirs="$noconfigdirs ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libstdc++-v3"
+     ;;
+   *-*-freebsd[12] | *-*-freebsd[12].* | *-*-freebsd*aout*)
+     noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
+@@ -2220,6 +2221,10 @@
    sh-*-linux*)
      noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
-     ;;    
+     ;;
 +  sh-*-elf)
 +    noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
-+	noconfigdirs="$noconfigdirs target-libstdc++-v3"
-+    ;;    
++    noconfigdirs="$noconfigdirs target-libstdc++-v3"
++	;;
    sh*-*-pe|mips*-*-pe|*arm-wince-pe)
      noconfigdirs="$noconfigdirs ${libgcj}"
      noconfigdirs="$noconfigdirs target-examples"
-@@ -1320,6 +1324,7 @@
+@@ -2247,6 +2252,7 @@
      ;;
    arm-*-elf* | strongarm-*-elf* | xscale-*-elf* | arm*-*-eabi* )
      noconfigdirs="$noconfigdirs target-libffi target-qthreads"
-+	noconfigdirs="$noconfigdirs target-libstdc++-v3"
++    noconfigdirs="$noconfigdirs target-libstdc++-v3"
+     libgloss_dir=arm
      ;;
    arm*-*-linux-gnueabi)
-     noconfigdirs="$noconfigdirs target-libffi target-qthreads"
-@@ -1434,6 +1439,7 @@
+@@ -2373,6 +2379,7 @@
      ;;
    i[3456789]86-*-coff | i[3456789]86-*-elf)
      noconfigdirs="$noconfigdirs ${libgcj}"
 +    noconfigdirs="$noconfigdirs target-libstdc++-v3"
+     libgloss_dir=i386
      ;;
    i[3456789]86-*-linux*)
-     # The GCC port for glibc1 has no MD_FALLBACK_FRAME_STATE_FOR, so let's
-@@ -1494,6 +1500,10 @@
+@@ -2438,6 +2445,10 @@
    i[3456789]86-*-rdos*)
      noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss"
      ;;
@@ -39,23 +47,23 @@ diff -ruN gcc-4.2.2/configure gcc-4.2.2.patched/configure
    m32r-*-*)
      noconfigdirs="$noconfigdirs ${libgcj}"
      ;;
-@@ -1544,6 +1554,10 @@
-   powerpc-*-eabi)
+@@ -2494,6 +2505,10 @@
      noconfigdirs="$noconfigdirs ${libgcj}"
+     libgloss_dir=rs6000
      ;;
 +  powerpc-*-elf)
 +    noconfigdirs="$noconfigdirs ${libgcj}"
 +    noconfigdirs="$noconfigdirs target-libstdc++-v3"
 +    ;;
    powerpc-*-eabi* | powerpcle-*-eabi* | powerpc-*-rtems* )
+     libgloss_dir=rs6000
      ;;
-   rs6000-*-lynxos*)
-diff -ruN gcc-4.2.2/gcc/config/arm/t-arm-elf gcc-4.2.2.patched/gcc/config/arm/t-arm-elf
---- gcc-4.2.2/gcc/config/arm/t-arm-elf	2006-11-06 04:13:53.000000000 -0800
-+++ gcc-4.2.2.patched/gcc/config/arm/t-arm-elf	2007-11-25 13:44:12.000000000 -0800
-@@ -11,6 +11,10 @@
- MULTILIB_EXCEPTIONS  = 
- MULTILIB_MATCHES     =
+diff -ruN gcc-4.3.2/gcc/config/arm/t-arm-elf gcc-4.3.2.patched/gcc/config/arm/t-arm-elf
+--- gcc-4.3.2/gcc/config/arm/t-arm-elf	2007-01-03 15:48:10.000000000 -0800
++++ gcc-4.3.2.patched/gcc/config/arm/t-arm-elf	2008-12-25 08:49:29.000000000 -0800
+@@ -21,6 +21,10 @@
+ #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
+ #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
  
 +# build a bunch of specialized versions of libcc for particular cores
 +MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/march=armv4/march=armv4t/march=armv5/march=armv5t/march=armv5te/march=armv6/march=armv6j/march=armv6k/march=armv6z/march=armv6zk
@@ -64,7 +72,7 @@ diff -ruN gcc-4.2.2/gcc/config/arm/t-arm-elf gcc-4.2.2.patched/gcc/config/arm/t-
  # MULTILIB_OPTIONS    += mcpu=ep9312
  # MULTILIB_DIRNAMES   += ep9312
  # MULTILIB_EXCEPTIONS += *mthumb/*mcpu=ep9312*
-@@ -23,8 +27,8 @@
+@@ -33,8 +37,8 @@
  # MULTILIB_DIRNAMES   += fpu soft
  # MULTILIB_EXCEPTIONS += *mthumb/*mhard-float*
  # 
@@ -75,9 +83,9 @@ diff -ruN gcc-4.2.2/gcc/config/arm/t-arm-elf gcc-4.2.2.patched/gcc/config/arm/t-
  # 
  # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
  # MULTILIB_DIRNAMES   += elf under
-diff -ruN gcc-4.2.2/gcc/config/i386/t-x86_64elf gcc-4.2.2.patched/gcc/config/i386/t-x86_64elf
---- gcc-4.2.2/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc-4.2.2.patched/gcc/config/i386/t-x86_64elf	2007-11-25 13:44:12.000000000 -0800
+diff -ruN gcc-4.3.2/gcc/config/i386/t-x86_64elf gcc-4.3.2.patched/gcc/config/i386/t-x86_64elf
+--- gcc-4.3.2/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
++++ gcc-4.3.2.patched/gcc/config/i386/t-x86_64elf	2008-12-25 08:49:29.000000000 -0800
 @@ -0,0 +1,21 @@
 +# On x86-64 we do not need any exports for glibc for 64-bit libgcc_s,
 +# override the settings
@@ -100,12 +108,12 @@ diff -ruN gcc-4.2.2/gcc/config/i386/t-x86_64elf gcc-4.2.2.patched/gcc/config/i38
 +# because then __FRAME_END__ might not be the last thing in .eh_frame
 +# section.
 +#CRTSTUFF_T_CFLAGS = -fno-omit-frame-pointer -fno-asynchronous-unwind-tables
-diff -ruN gcc-4.2.2/gcc/config.gcc gcc-4.2.2.patched/gcc/config.gcc
---- gcc-4.2.2/gcc/config.gcc	2007-09-01 08:28:30.000000000 -0700
-+++ gcc-4.2.2.patched/gcc/config.gcc	2007-11-25 13:44:12.000000000 -0800
-@@ -1058,6 +1058,10 @@
- x86_64-*-freebsd*)
+diff -ruN gcc-4.3.2/gcc/config.gcc gcc-4.3.2.patched/gcc/config.gcc
+--- gcc-4.3.2/gcc/config.gcc	2008-06-09 09:32:15.000000000 -0700
++++ gcc-4.3.2.patched/gcc/config.gcc	2008-12-25 08:49:29.000000000 -0800
+@@ -1121,6 +1121,10 @@
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h ${fbsd_tm_file} i386/x86-64.h i386/freebsd.h i386/freebsd64.h"
+ 	tmake_file="${tmake_file} i386/t-crtstuff"
  	;;
 +x86_64-*-elf*)
 +	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/x86-64.h"
