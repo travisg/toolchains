@@ -58,16 +58,28 @@ diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
    powerpc-*-eabi* | powerpcle-*-eabi* | powerpc-*-rtems* )
      libgloss_dir=rs6000
      ;;
+Files gcc-4.3.2/gcc/config/arm/.t-arm-elf.swp and gcc-4.3.2.patched/gcc/config/arm/.t-arm-elf.swp differ
 diff -ruN gcc-4.3.2/gcc/config/arm/t-arm-elf gcc-4.3.2.patched/gcc/config/arm/t-arm-elf
 --- gcc-4.3.2/gcc/config/arm/t-arm-elf	2007-01-03 15:48:10.000000000 -0800
-+++ gcc-4.3.2.patched/gcc/config/arm/t-arm-elf	2008-12-25 08:49:29.000000000 -0800
++++ gcc-4.3.2.patched/gcc/config/arm/t-arm-elf	2008-12-25 10:07:27.000000000 -0800
+@@ -6,8 +6,8 @@
+ 	_truncdfsf2 _negsf2 _addsubsf3 _muldivsf3 _cmpsf2 _unordsf2 \
+ 	_fixsfsi _fixunssfsi _floatdidf _floatdisf _floatundidf _floatundisf
+ 
+-MULTILIB_OPTIONS     = marm/mthumb
+-MULTILIB_DIRNAMES    = arm thumb
++MULTILIB_OPTIONS     = mthumb
++MULTILIB_DIRNAMES    = thumb
+ MULTILIB_EXCEPTIONS  = 
+ MULTILIB_MATCHES     =
+ 
 @@ -21,6 +21,10 @@
  #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
  #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
  
 +# build a bunch of specialized versions of libcc for particular cores
-+MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/march=armv4/march=armv4t/march=armv5/march=armv5t/march=armv5te/march=armv6/march=armv6j/march=armv6k/march=armv6z/march=armv6zk
-+MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore armv4 armv4t armv5 armv5t armv5te armv6 armv6j armv6k armv6z armv6zk
++MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/mcpu=cortex-a8/march=armv4t/march=armv5t/march=armv5te/march=armv6/march=armv6j/march=armv6k/march=armv6z/march=armv6zk/march=armv7-a/march=armv7-r
++MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore cortex-a8 armv4t armv5t armv5te armv6 armv6j armv6k armv6z armv6zk armv7-a armv7-r
 +
  # MULTILIB_OPTIONS    += mcpu=ep9312
  # MULTILIB_DIRNAMES   += ep9312
