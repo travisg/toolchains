@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # load GCCVER and BINVER
-. toolvers
+. ./toolvers
 
 rm -rf build-*
 rm -rf gcc-$GCCVER gcc-$GCCVER.patched
