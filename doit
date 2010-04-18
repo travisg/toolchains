@@ -1,7 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 OS=`uname`
 HOSTARCH=`uname -m`
+ARCHSUFFIX=.bz2
 
 if [ "x$ARCHES" = "x" ]; then
 	echo need to specify architectures to build in the ARCHES environment variable
@@ -13,18 +14,18 @@ fi
 . toolvers
 
 if [ ! -d binutils-$BINVER.patched ]; then
-	echo extracting binutils-$BINVER.tar.bz2
+	echo extracting binutils-$BINVER.tar${ARCHSUFFIX}
 	rm -rf binutils-$BINVER
-	tar xjf binutils-$BINVER.tar.bz2 || exit 1
+	tar xf binutils-$BINVER.tar${ARCHSUFFIX} || exit 1
 	echo patching binutils
 	patch -d binutils-$BINVER -p1 < binutils-patch.txt || exit 1
 	rm -rf binutils-$BINVER.patched
 	mv binutils-$BINVER binutils-$BINVER.patched
 fi
 if [ ! -d gcc-$GCCVER.patched ]; then
-	echo extracting gcc-$GCCVER.tar.bz2
+	echo extracting gcc-$GCCVER.tar${ARCHSUFFIX}
 	rm -rf gcc-$GCCVER
-	tar xjf gcc-$GCCVER.tar.bz2 || exit 1
+	tar xf gcc-$GCCVER.tar${ARCHSUFFIX} || exit 1
 	echo patching gcc
 	patch -d gcc-$GCCVER -p1 < gcc-patch.txt || exit 1
 	rm -rf gcc-$GCCVER.patched
