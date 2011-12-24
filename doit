@@ -2,7 +2,7 @@
 
 OS=`uname`
 HOSTARCH=`uname -m`
-ARCHSUFFIX=.bz2
+ARCHSUFFIX=.xz
 
 if [ "x$ARCHES" = "x" ]; then
 	echo need to specify architectures to build in the ARCHES environment variable
@@ -28,6 +28,16 @@ if [ ! -d gcc-$GCCVER.patched ]; then
 	tar xf gcc-$GCCVER.tar${ARCHSUFFIX} || exit 1
 	echo patching gcc
 	patch -d gcc-$GCCVER -p1 < gcc-patch.txt || exit 1
+
+	cd gcc-$GCCVER
+	tar xf ../gmp-*
+	tar xf ../mpc-*
+	tar xf ../mpfr-*
+	ln -sf gmp-* gmp
+	ln -sf mpc-* mpc
+	ln -sf mpfr-* mpfr
+	cd ..
+
 	rm -rf gcc-$GCCVER.patched
 	mv gcc-$GCCVER gcc-$GCCVER.patched
 fi
@@ -43,9 +53,9 @@ for ARCH in $ARCHES; do
 		(mkdir -p $BINBUILDPATH &&
 		cd $BINBUILDPATH &&
 		../binutils-$BINVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH &&
-		gmake configure-host &&
-		gmake -j4 &&
-		gmake install &&
+		make configure-host &&
+		make -j32 &&
+		make install &&
 		touch built.txt)
 	fi
 
@@ -53,9 +63,9 @@ for ARCH in $ARCHES; do
 		(mkdir -p $GCCBUILDPATH &&
 		cd $GCCBUILDPATH &&
 		../gcc-$GCCVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH --enable-languages=c,c++ --disable-libssp &&
-		gmake configure-host &&
-		gmake -j4 &&
-		gmake install &&
+		make configure-host &&
+		make -j32 &&
+		make install &&
 		touch built.txt)
 	fi
 done

@@ -1,7 +1,7 @@
-diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
---- gcc-4.3.2/configure	2008-02-01 19:29:30.000000000 -0800
-+++ gcc-4.3.2.patched/configure	2008-12-25 08:59:11.000000000 -0800
-@@ -2141,6 +2141,7 @@
+diff -ruN gcc-4.6.2/configure gcc-4.6.2.patched/configure
+--- gcc-4.6.2/configure	2011-06-27 13:54:59.000000000 -0700
++++ gcc-4.6.2.patched/configure	2011-12-24 12:23:16.660536149 -0800
+@@ -3125,6 +3125,7 @@
      noconfigdirs="$noconfigdirs ld gas gdb gprof"
      noconfigdirs="$noconfigdirs sim target-rda"
      noconfigdirs="$noconfigdirs ${libgcj}"
@@ -9,7 +9,7 @@ diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
      ;;
    *-*-freebsd[12] | *-*-freebsd[12].* | *-*-freebsd*aout*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
-@@ -2220,6 +2221,10 @@
+@@ -3205,6 +3206,10 @@
    sh-*-linux*)
      noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
      ;;
@@ -20,7 +20,7 @@ diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
    sh*-*-pe|mips*-*-pe|*arm-wince-pe)
      noconfigdirs="$noconfigdirs ${libgcj}"
      noconfigdirs="$noconfigdirs target-examples"
-@@ -2247,6 +2252,7 @@
+@@ -3232,6 +3237,7 @@
      ;;
    arm-*-elf* | strongarm-*-elf* | xscale-*-elf* | arm*-*-eabi* )
      noconfigdirs="$noconfigdirs target-libffi target-qthreads"
@@ -28,7 +28,7 @@ diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
      libgloss_dir=arm
      ;;
    arm*-*-linux-gnueabi)
-@@ -2373,6 +2379,7 @@
+@@ -3369,6 +3375,7 @@
      ;;
    i[3456789]86-*-coff | i[3456789]86-*-elf)
      noconfigdirs="$noconfigdirs ${libgcj}"
@@ -36,7 +36,7 @@ diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
      libgloss_dir=i386
      ;;
    i[3456789]86-*-linux*)
-@@ -2438,6 +2445,10 @@
+@@ -3436,6 +3443,10 @@
    i[3456789]86-*-rdos*)
      noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss"
      ;;
@@ -47,7 +47,7 @@ diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
    m32r-*-*)
      noconfigdirs="$noconfigdirs ${libgcj}"
      ;;
-@@ -2494,6 +2505,10 @@
+@@ -3492,6 +3503,10 @@
      noconfigdirs="$noconfigdirs ${libgcj}"
      libgloss_dir=rs6000
      ;;
@@ -58,33 +58,69 @@ diff -ruN gcc-4.3.2/configure gcc-4.3.2.patched/configure
    powerpc-*-eabi* | powerpcle-*-eabi* | powerpc-*-rtems* )
      libgloss_dir=rs6000
      ;;
-Files gcc-4.3.2/gcc/config/arm/.t-arm-elf.swp and gcc-4.3.2.patched/gcc/config/arm/.t-arm-elf.swp differ
-diff -ruN gcc-4.3.2/gcc/config/arm/t-arm-elf gcc-4.3.2.patched/gcc/config/arm/t-arm-elf
---- gcc-4.3.2/gcc/config/arm/t-arm-elf	2007-01-03 15:48:10.000000000 -0800
-+++ gcc-4.3.2.patched/gcc/config/arm/t-arm-elf	2008-12-25 10:07:27.000000000 -0800
-@@ -6,8 +6,8 @@
- 	_truncdfsf2 _negsf2 _addsubsf3 _muldivsf3 _cmpsf2 _unordsf2 \
- 	_fixsfsi _fixunssfsi _floatdidf _floatdisf _floatundidf _floatundisf
+diff -ruN gcc-4.6.2/gcc/config/arm/elf.h gcc-4.6.2.patched/gcc/config/arm/elf.h
+--- gcc-4.6.2/gcc/config/arm/elf.h	2009-06-21 13:48:15.000000000 -0700
++++ gcc-4.6.2.patched/gcc/config/arm/elf.h	2011-12-24 13:12:51.121576063 -0800
+@@ -164,3 +164,6 @@
+ #undef L_floatundisf
+ #endif
  
--MULTILIB_OPTIONS     = marm/mthumb
--MULTILIB_DIRNAMES    = arm thumb
-+MULTILIB_OPTIONS     = mthumb
-+MULTILIB_DIRNAMES    = thumb
- MULTILIB_EXCEPTIONS  = 
- MULTILIB_MATCHES     =
- 
-@@ -21,6 +21,10 @@
- #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
- #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
- 
-+# build a bunch of specialized versions of libcc for particular cores
-+MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/mcpu=cortex-a8/march=armv4t/march=armv5t/march=armv5te/march=armv6/march=armv6j/march=armv6k/march=armv6z/march=armv6zk/march=armv7-a/march=armv7-r
-+MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore cortex-a8 armv4t armv5t armv5te armv6 armv6j armv6k armv6z armv6zk armv7-a armv7-r
++#undef FPUTYPE_DEFAULT
++#define FPUTYPE_DEFAULT "vfp"
 +
- # MULTILIB_OPTIONS    += mcpu=ep9312
- # MULTILIB_DIRNAMES   += ep9312
- # MULTILIB_EXCEPTIONS += *mthumb/*mcpu=ep9312*
-@@ -33,8 +37,8 @@
+diff -ruN gcc-4.6.2/gcc/config/arm/t-arm-elf gcc-4.6.2.patched/gcc/config/arm/t-arm-elf
+--- gcc-4.6.2/gcc/config/arm/t-arm-elf	2011-01-03 12:52:22.000000000 -0800
++++ gcc-4.6.2.patched/gcc/config/arm/t-arm-elf	2011-12-24 14:13:54.219032141 -0800
+@@ -40,22 +40,36 @@
+ #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
+ #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
+ 
+-#MULTILIB_OPTIONS      += march=armv7
+-#MULTILIB_DIRNAMES     += thumb2
+-#MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-a
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-r
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-m
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
++# build a bunch of specialized versions of libcc for particular cores
++#MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/mcpu=cortex-a8/cortex-a9/march=armv4t/march=armv5t/march=armv5te/march=armv6/march=armv6j/march=armv6k/march=armv6z/march=armv6zk/march=armv7-a/march=armv7-r
++#MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore cortex-a8 cortex-a9 cortex-m3 armv4t armv5t armv5te armv6 armv6j armv6k armv6z armv6zk armv7-a armv7-r
++#MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/mcpu=cortex-a8/mcpu=cortex-a9
++#MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore cortex-a8 cortex-a9
++
++MULTILIB_OPTIONS      += march=armv7
++MULTILIB_DIRNAMES     += thumb2
++MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
++MULTILIB_MATCHES      += march?armv7=march?armv7-a
++MULTILIB_MATCHES      += march?armv7=march?armv7-r
++MULTILIB_MATCHES      += march?armv7=march?armv7-m
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a15
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a9
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m4
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
++
++MULTILIB_OPTIONS      += mfpu=vfp
++MULTILIB_DIRNAMES     += vfp
++MULTILIB_MATCHES      += mfpu?vfp=mcpu?arm1136jf-s
++MULTILIB_MATCHES      += mfpu?vfp=mcpu?arm1136jzf-s
+ 
+ # Not quite true.  We can support hard-vfp calling in Thumb2, but how do we
+ # express that here?  Also, we really need architecture v5e or later
+ # (mcrr etc).
+-MULTILIB_OPTIONS       += mfloat-abi=hard
+-MULTILIB_DIRNAMES      += fpu
+-MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
++#MULTILIB_OPTIONS       += mfloat-abi=hard
++#MULTILIB_DIRNAMES      += fpu
++#MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
+ #MULTILIB_EXCEPTIONS    += *mcpu=fa526/*mfloat-abi=hard*
+ #MULTILIB_EXCEPTIONS    += *mcpu=fa626/*mfloat-abi=hard*
+ 
+@@ -71,8 +85,8 @@
  # MULTILIB_DIRNAMES   += fpu soft
  # MULTILIB_EXCEPTIONS += *mthumb/*mhard-float*
  # 
@@ -95,9 +131,9 @@ diff -ruN gcc-4.3.2/gcc/config/arm/t-arm-elf gcc-4.3.2.patched/gcc/config/arm/t-
  # 
  # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
  # MULTILIB_DIRNAMES   += elf under
-diff -ruN gcc-4.3.2/gcc/config/i386/t-x86_64elf gcc-4.3.2.patched/gcc/config/i386/t-x86_64elf
---- gcc-4.3.2/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc-4.3.2.patched/gcc/config/i386/t-x86_64elf	2008-12-25 08:49:29.000000000 -0800
+diff -ruN gcc-4.6.2/gcc/config/i386/t-x86_64elf gcc-4.6.2.patched/gcc/config/i386/t-x86_64elf
+--- gcc-4.6.2/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
++++ gcc-4.6.2.patched/gcc/config/i386/t-x86_64elf	2011-12-24 12:23:16.660536149 -0800
 @@ -0,0 +1,21 @@
 +# On x86-64 we do not need any exports for glibc for 64-bit libgcc_s,
 +# override the settings
@@ -120,10 +156,10 @@ diff -ruN gcc-4.3.2/gcc/config/i386/t-x86_64elf gcc-4.3.2.patched/gcc/config/i38
 +# because then __FRAME_END__ might not be the last thing in .eh_frame
 +# section.
 +#CRTSTUFF_T_CFLAGS = -fno-omit-frame-pointer -fno-asynchronous-unwind-tables
-diff -ruN gcc-4.3.2/gcc/config.gcc gcc-4.3.2.patched/gcc/config.gcc
---- gcc-4.3.2/gcc/config.gcc	2008-06-09 09:32:15.000000000 -0700
-+++ gcc-4.3.2.patched/gcc/config.gcc	2008-12-25 08:49:29.000000000 -0800
-@@ -1121,6 +1121,10 @@
+diff -ruN gcc-4.6.2/gcc/config.gcc gcc-4.6.2.patched/gcc/config.gcc
+--- gcc-4.6.2/gcc/config.gcc	2011-07-22 09:44:50.000000000 -0700
++++ gcc-4.6.2.patched/gcc/config.gcc	2011-12-24 12:23:16.660536149 -0800
+@@ -1219,6 +1219,10 @@
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h ${fbsd_tm_file} i386/x86-64.h i386/freebsd.h i386/freebsd64.h"
  	tmake_file="${tmake_file} i386/t-crtstuff"
  	;;
@@ -133,4 +169,4 @@ diff -ruN gcc-4.3.2/gcc/config.gcc gcc-4.3.2.patched/gcc/config.gcc
 +	;;
  i[34567]86-*-netbsdelf*)
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h netbsd.h netbsd-elf.h i386/netbsd-elf.h"
- 	;;
+ 	extra_options="${extra_options} netbsd.opt netbsd-elf.opt"
