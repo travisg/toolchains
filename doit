@@ -13,6 +13,7 @@ fi
 # load GCCVER and BINVER
 . toolvers
 
+
 if [ ! -d binutils-$BINVER.patched ]; then
 	echo extracting binutils-$BINVER.tar${ARCHSUFFIX}
 	rm -rf binutils-$BINVER
@@ -53,17 +54,21 @@ for ARCH in $ARCHES; do
 		(mkdir -p $BINBUILDPATH &&
 		cd $BINBUILDPATH &&
 		../binutils-$BINVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH &&
-		make configure-host &&
+#		make configure-host &&
 		make -j32 &&
 		make install &&
 		touch built.txt)
 	fi
 
 	if [ ! -f $GCCBUILDPATH/built.txt ]; then
+		ARCH_OPTIONS=
+		if [ $ARCH == "arm" ]; then
+			ARCH_OPTIONS="--with-cpu=arm926ej-s --with-fpu=vfp"
+		fi
 		(mkdir -p $GCCBUILDPATH &&
 		cd $GCCBUILDPATH &&
-		../gcc-$GCCVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH --enable-languages=c,c++ --disable-libssp &&
-		make configure-host &&
+		../gcc-$GCCVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH --enable-languages=c,c++ --disable-libssp $ARCH_OPTIONS &&
+#		make configure-host &&
 		make -j32 &&
 		make install &&
 		touch built.txt)
