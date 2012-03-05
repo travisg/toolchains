@@ -1,6 +1,6 @@
-diff -ruN gcc-4.6.2/configure gcc-4.6.2.patched/configure
---- gcc-4.6.2/configure	2011-06-27 13:54:59.000000000 -0700
-+++ gcc-4.6.2.patched/configure	2011-12-24 14:43:18.837871685 -0800
+diff -ruN gcc-4.6.3/configure gcc-4.6.3.patched/configure
+--- gcc-4.6.3/configure	2011-12-18 02:03:44.000000000 -0800
++++ gcc-4.6.3.patched/configure	2012-03-05 09:34:28.740713112 -0800
 @@ -3125,6 +3125,7 @@
      noconfigdirs="$noconfigdirs ld gas gdb gprof"
      noconfigdirs="$noconfigdirs sim target-rda"
@@ -58,9 +58,9 @@ diff -ruN gcc-4.6.2/configure gcc-4.6.2.patched/configure
    powerpc-*-eabi* | powerpcle-*-eabi* | powerpc-*-rtems* )
      libgloss_dir=rs6000
      ;;
-diff -ruN gcc-4.6.2/gcc/config/arm/t-arm-elf gcc-4.6.2.patched/gcc/config/arm/t-arm-elf
---- gcc-4.6.2/gcc/config/arm/t-arm-elf	2011-01-03 12:52:22.000000000 -0800
-+++ gcc-4.6.2.patched/gcc/config/arm/t-arm-elf	2011-12-24 16:15:15.141268521 -0800
+diff -ruN gcc-4.6.3/gcc/config/arm/t-arm-elf gcc-4.6.3.patched/gcc/config/arm/t-arm-elf
+--- gcc-4.6.3/gcc/config/arm/t-arm-elf	2011-01-03 12:52:22.000000000 -0800
++++ gcc-4.6.3.patched/gcc/config/arm/t-arm-elf	2012-03-05 09:34:28.744713208 -0800
 @@ -40,22 +40,36 @@
  #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
  #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
@@ -121,9 +121,9 @@ diff -ruN gcc-4.6.2/gcc/config/arm/t-arm-elf gcc-4.6.2.patched/gcc/config/arm/t-
  # 
  # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
  # MULTILIB_DIRNAMES   += elf under
-diff -ruN gcc-4.6.2/gcc/config/i386/t-x86_64elf gcc-4.6.2.patched/gcc/config/i386/t-x86_64elf
---- gcc-4.6.2/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc-4.6.2.patched/gcc/config/i386/t-x86_64elf	2011-12-24 14:43:18.841871782 -0800
+diff -ruN gcc-4.6.3/gcc/config/i386/t-x86_64elf gcc-4.6.3.patched/gcc/config/i386/t-x86_64elf
+--- gcc-4.6.3/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
++++ gcc-4.6.3.patched/gcc/config/i386/t-x86_64elf	2012-03-05 09:34:28.744713208 -0800
 @@ -0,0 +1,21 @@
 +# On x86-64 we do not need any exports for glibc for 64-bit libgcc_s,
 +# override the settings
@@ -146,9 +146,9 @@ diff -ruN gcc-4.6.2/gcc/config/i386/t-x86_64elf gcc-4.6.2.patched/gcc/config/i38
 +# because then __FRAME_END__ might not be the last thing in .eh_frame
 +# section.
 +#CRTSTUFF_T_CFLAGS = -fno-omit-frame-pointer -fno-asynchronous-unwind-tables
-diff -ruN gcc-4.6.2/gcc/config.gcc gcc-4.6.2.patched/gcc/config.gcc
---- gcc-4.6.2/gcc/config.gcc	2011-07-22 09:44:50.000000000 -0700
-+++ gcc-4.6.2.patched/gcc/config.gcc	2011-12-24 15:41:41.011836201 -0800
+diff -ruN gcc-4.6.3/gcc/config.gcc gcc-4.6.3.patched/gcc/config.gcc
+--- gcc-4.6.3/gcc/config.gcc	2011-07-22 09:44:50.000000000 -0700
++++ gcc-4.6.3.patched/gcc/config.gcc	2012-03-05 09:34:28.744713208 -0800
 @@ -1219,6 +1219,10 @@
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h ${fbsd_tm_file} i386/x86-64.h i386/freebsd.h i386/freebsd64.h"
  	tmake_file="${tmake_file} i386/t-crtstuff"

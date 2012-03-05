@@ -1,7 +1,7 @@
-diff -ru binutils-2.19/bfd/elf32-arm.c binutils-2.19.patched/bfd/elf32-arm.c
---- binutils-2.19/bfd/elf32-arm.c	2008-08-26 07:40:18.000000000 -0700
-+++ binutils-2.19.patched/bfd/elf32-arm.c	2008-12-25 08:40:08.000000000 -0800
-@@ -11825,7 +11825,8 @@
+diff -ru binutils-2.22/bfd/elf32-arm.c binutils-2.22.patched/bfd/elf32-arm.c
+--- binutils-2.22/bfd/elf32-arm.c	2011-11-21 01:29:13.000000000 -0800
++++ binutils-2.22.patched/bfd/elf32-arm.c	2012-03-05 09:34:21.444536814 -0800
+@@ -15317,7 +15317,8 @@
  #ifdef __QNXTARGET__
  #define ELF_MAXPAGESIZE			0x1000
  #else
@@ -11,4 +11,4 @@ diff -ru binutils-2.19/bfd/elf32-arm.c binutils-2.19.patched/bfd/elf32-arm.c
  #endif
  #define ELF_MINPAGESIZE			0x1000
  #define ELF_COMMONPAGESIZE		0x1000
-Only in binutils-2.19.patched/bfd: elf32-arm.c.orig
+Only in binutils-2.22.patched/bfd: elf32-arm.c.orig
