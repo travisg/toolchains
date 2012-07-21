@@ -1,67 +1,7 @@
-diff -ruN gcc-4.6.3/configure gcc-4.6.3.patched/configure
---- gcc-4.6.3/configure	2011-12-18 02:03:44.000000000 -0800
-+++ gcc-4.6.3.patched/configure	2012-03-05 09:34:28.740713112 -0800
-@@ -3125,6 +3125,7 @@
-     noconfigdirs="$noconfigdirs ld gas gdb gprof"
-     noconfigdirs="$noconfigdirs sim target-rda"
-     noconfigdirs="$noconfigdirs ${libgcj}"
-+    noconfigdirs="$noconfigdirs target-libstdc++-v3"
-     ;;
-   *-*-freebsd[12] | *-*-freebsd[12].* | *-*-freebsd*aout*)
-     noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
-@@ -3205,6 +3206,10 @@
-   sh-*-linux*)
-     noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
-     ;;
-+  sh-*-elf)
-+    noconfigdirs="$noconfigdirs ${libgcj} target-newlib target-libgloss"
-+    noconfigdirs="$noconfigdirs target-libstdc++-v3"
-+	;;
-   sh*-*-pe|mips*-*-pe|*arm-wince-pe)
-     noconfigdirs="$noconfigdirs ${libgcj}"
-     noconfigdirs="$noconfigdirs target-examples"
-@@ -3232,6 +3237,7 @@
-     ;;
-   arm-*-elf* | strongarm-*-elf* | xscale-*-elf* | arm*-*-eabi* )
-     noconfigdirs="$noconfigdirs target-libffi target-qthreads"
-+    noconfigdirs="$noconfigdirs target-libstdc++-v3"
-     libgloss_dir=arm
-     ;;
-   arm*-*-linux-gnueabi)
-@@ -3369,6 +3375,7 @@
-     ;;
-   i[3456789]86-*-coff | i[3456789]86-*-elf)
-     noconfigdirs="$noconfigdirs ${libgcj}"
-+    noconfigdirs="$noconfigdirs target-libstdc++-v3"
-     libgloss_dir=i386
-     ;;
-   i[3456789]86-*-linux*)
-@@ -3436,6 +3443,10 @@
-   i[3456789]86-*-rdos*)
-     noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss"
-     ;;
-+  x86_64-*-elf)
-+    noconfigdirs="$noconfigdirs ${libgcj}"
-+	noconfigdirs="$noconfigdirs target-libiberty target-libstdc++-v3"
-+    ;;
-   m32r-*-*)
-     noconfigdirs="$noconfigdirs ${libgcj}"
-     ;;
-@@ -3492,6 +3503,10 @@
-     noconfigdirs="$noconfigdirs ${libgcj}"
-     libgloss_dir=rs6000
-     ;;
-+  powerpc-*-elf)
-+    noconfigdirs="$noconfigdirs ${libgcj}"
-+    noconfigdirs="$noconfigdirs target-libstdc++-v3"
-+    ;;
-   powerpc-*-eabi* | powerpcle-*-eabi* | powerpc-*-rtems* )
-     libgloss_dir=rs6000
-     ;;
-diff -ruN gcc-4.6.3/gcc/config/arm/t-arm-elf gcc-4.6.3.patched/gcc/config/arm/t-arm-elf
---- gcc-4.6.3/gcc/config/arm/t-arm-elf	2011-01-03 12:52:22.000000000 -0800
-+++ gcc-4.6.3.patched/gcc/config/arm/t-arm-elf	2012-03-05 09:34:28.744713208 -0800
-@@ -40,22 +40,36 @@
+diff -ru gcc-4.7.1/gcc/config/arm/t-arm-elf gcc-4.7.1.patched/gcc/config/arm/t-arm-elf
+--- gcc-4.7.1/gcc/config/arm/t-arm-elf	2011-11-02 08:23:48.000000000 -0700
++++ gcc-4.7.1.patched/gcc/config/arm/t-arm-elf	2012-07-21 11:04:26.443951308 -0700
+@@ -26,22 +26,36 @@
  #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
  #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
  
@@ -110,9 +50,9 @@ diff -ruN gcc-4.6.3/gcc/config/arm/t-arm-elf gcc-4.6.3.patched/gcc/config/arm/t-
  #MULTILIB_EXCEPTIONS    += *mcpu=fa526/*mfloat-abi=hard*
  #MULTILIB_EXCEPTIONS    += *mcpu=fa626/*mfloat-abi=hard*
  
-@@ -71,8 +85,8 @@
+@@ -57,8 +71,8 @@
  # MULTILIB_DIRNAMES   += fpu soft
- # MULTILIB_EXCEPTIONS += *mthumb/*mhard-float*
+ # MULTILIB_EXCEPTIONS += *mthumb/*mfloat-abi=hard*
  # 
 -# MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
 -# MULTILIB_DIRNAMES   += normal interwork
@@ -121,42 +61,3 @@ diff -ruN gcc-4.6.3/gcc/config/arm/t-arm-elf gcc-4.6.3.patched/gcc/config/arm/t-
  # 
  # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
  # MULTILIB_DIRNAMES   += elf under
-diff -ruN gcc-4.6.3/gcc/config/i386/t-x86_64elf gcc-4.6.3.patched/gcc/config/i386/t-x86_64elf
---- gcc-4.6.3/gcc/config/i386/t-x86_64elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc-4.6.3.patched/gcc/config/i386/t-x86_64elf	2012-03-05 09:34:28.744713208 -0800
-@@ -0,0 +1,21 @@
-+# On x86-64 we do not need any exports for glibc for 64-bit libgcc_s,
-+# override the settings
-+# from t-slibgcc-elf-ver and t-linux
-+#SHLIB_MAPFILES = $(srcdir)/libgcc-std.ver \
-+#		 $(srcdir)/config/i386/libgcc-x86_64-glibc.ver
-+
-+MULTILIB_OPTIONS = m64/m32
-+MULTILIB_DIRNAMES = 64 32 
-+MULTILIB_OSDIRNAMES = ../lib64 ../lib
-+
-+LIBGCC = stmp-multilib
-+INSTALL_LIBGCC = install-multilib
-+
-+#EXTRA_MULTILIB_PARTS=crtbegin.o crtend.o crtbeginS.o crtendS.o \
-+#		     crtbeginT.o crtfastmath.o
-+
-+# The pushl in CTOR initialization interferes with frame pointer elimination.
-+# crtend*.o cannot be compiled without -fno-asynchronous-unwind-tables,
-+# because then __FRAME_END__ might not be the last thing in .eh_frame
-+# section.
-+#CRTSTUFF_T_CFLAGS = -fno-omit-frame-pointer -fno-asynchronous-unwind-tables
-diff -ruN gcc-4.6.3/gcc/config.gcc gcc-4.6.3.patched/gcc/config.gcc
---- gcc-4.6.3/gcc/config.gcc	2011-07-22 09:44:50.000000000 -0700
-+++ gcc-4.6.3.patched/gcc/config.gcc	2012-03-05 09:34:28.744713208 -0800
-@@ -1219,6 +1219,10 @@
- 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h ${fbsd_tm_file} i386/x86-64.h i386/freebsd.h i386/freebsd64.h"
- 	tmake_file="${tmake_file} i386/t-crtstuff"
- 	;;
-+x86_64-*-elf*)
-+	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/x86-64.h"
-+	tmake_file="i386/t-x86_64elf"
-+	;;
- i[34567]86-*-netbsdelf*)
- 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h netbsd.h netbsd-elf.h i386/netbsd-elf.h"
- 	extra_options="${extra_options} netbsd.opt netbsd-elf.opt"

@@ -3,6 +3,7 @@
 OS=`uname`
 HOSTARCH=`uname -m`
 ARCHSUFFIX=.xz
+PARALLEL=-j32
 
 if [ "x$ARCHES" = "x" ]; then
 	echo need to specify architectures to build in the ARCHES environment variable
@@ -30,22 +31,18 @@ if [ ! -d gcc-$GCCVER.patched ]; then
 	echo patching gcc
 	patch -d gcc-$GCCVER -p1 < gcc-patch.txt || exit 1
 
-	cd gcc-$GCCVER
-	tar xf ../gmp-*
-	tar xf ../mpc-*
-	tar xf ../mpfr-*
-	ln -sf gmp-* gmp
-	ln -sf mpc-* mpc
-	ln -sf mpfr-* mpfr
-	cd ..
-
 	rm -rf gcc-$GCCVER.patched
 	mv gcc-$GCCVER gcc-$GCCVER.patched
 fi
 
 for ARCH in $ARCHES; do 
-#	INSTALLPATH=~/toolchains/$ARCH-elf-$GCCVER
-	INSTALLPATH=`pwd`/$ARCH-elf-$GCCVER-$OS-$HOSTARCH
+	if [ "$ARCH" == "arm" ]; then
+		TARGET=arm-eabi
+	else
+		TARGET=$ARCH-elf
+	fi
+
+	INSTALLPATH=`pwd`/$TARGET-$GCCVER-$OS-$HOSTARCH
 	BINBUILDPATH=build-binutils-$BINVER-$ARCH-$OS-$HOSTARCH
 	GCCBUILDPATH=build-gcc-$GCCVER-$ARCH-$OS-$HOSTARCH
 	export PATH=$INSTALLPATH/bin:$PATH
@@ -53,9 +50,9 @@ for ARCH in $ARCHES; do
 	if [ ! -f $BINBUILDPATH/built.txt ]; then
 		(mkdir -p $BINBUILDPATH &&
 		cd $BINBUILDPATH &&
-		../binutils-$BINVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH &&
-#		make configure-host &&
-		make -j32 &&
+		../binutils-$BINVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH &&
+		#make configure-host &&
+		make $PARALLEL &&
 		make install &&
 		touch built.txt)
 	fi
@@ -67,10 +64,11 @@ for ARCH in $ARCHES; do
 		fi
 		(mkdir -p $GCCBUILDPATH &&
 		cd $GCCBUILDPATH &&
-		../gcc-$GCCVER.patched/configure --target=$ARCH-elf --prefix=$INSTALLPATH --enable-languages=c,c++ --disable-libssp $ARCH_OPTIONS &&
-#		make configure-host &&
-		make -j32 &&
-		make install &&
+		../gcc-$GCCVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS &&
+		make all-gcc $PARALLEL &&
+		make all-target-libgcc $PARALLEL &&
+		make install-gcc &&
+		make install-target-libgcc &&
 		touch built.txt)
 	fi
 done
