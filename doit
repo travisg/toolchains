@@ -4,6 +4,7 @@ OS=`uname`
 HOSTARCH=`uname -m`
 ARCHSUFFIX=.xz
 PARALLEL=-j32
+GNU_FTP=ftp://ftp.gnu.org/gnu
 
 if [ "x$ARCHES" = "x" ]; then
 	echo need to specify architectures to build in the ARCHES environment variable
@@ -14,6 +15,11 @@ fi
 # load GCCVER and BINVER
 . toolvers
 
+if [ "$FETCH" = "1" ]; then
+    ARCHSUFFIX=.bz2
+    wget -N $GNU_FTP/binutils/binutils-$BINVER.tar$ARCHSUFFIX 
+    wget -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar$ARCHSUFFIX
+fi
 
 if [ ! -d binutils-$BINVER.patched ]; then
 	echo extracting binutils-$BINVER.tar${ARCHSUFFIX}
