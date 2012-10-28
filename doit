@@ -15,6 +15,12 @@ fi
 # load GCCVER and BINVER
 . toolvers
 
+UNAME=`uname`
+if [ "$UNAME" = "Darwin" ]; then
+	export CPPFLAGS=-I/opt/local/include
+	export LDFLAGS=-L/opt/local/lib
+fi
+
 if [ "$FETCH" = "1" ]; then
     ARCHSUFFIX=.bz2
     wget -N $GNU_FTP/binutils/binutils-$BINVER.tar$ARCHSUFFIX
