@@ -3,7 +3,7 @@
 OS=`uname`
 HOSTARCH=`uname -m`
 ARCHSUFFIX=.xz
-PARALLEL=-j32
+PARALLEL=-j8
 GNU_FTP=ftp://ftp.gnu.org/gnu
 
 if [ "x$ARCHES" = "x" ]; then
