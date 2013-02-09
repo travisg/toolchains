@@ -17,8 +17,9 @@ fi
 
 if [ "$FETCH" = "1" ]; then
     ARCHSUFFIX=.bz2
-    wget -N $GNU_FTP/binutils/binutils-$BINVER.tar$ARCHSUFFIX 
+    wget -N $GNU_FTP/binutils/binutils-$BINVER.tar$ARCHSUFFIX
     wget -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar$ARCHSUFFIX
+    wget -N $GNU_FTP/gdb/gdb-$GDBVER.tar$ARCHSUFFIX
 fi
 
 if [ ! -d binutils-$BINVER.patched ]; then
@@ -40,6 +41,16 @@ if [ ! -d gcc-$GCCVER.patched ]; then
 	rm -rf gcc-$GCCVER.patched
 	mv gcc-$GCCVER gcc-$GCCVER.patched
 fi
+if [ ! -d gdb-$GDBVER.patched ]; then
+	echo extracting gdb-$GDBVER.tar${ARCHSUFFIX}
+	rm -rf gdb-$GDBVER
+	tar xf gdb-$GDBVER.tar${ARCHSUFFIX} || exit 1
+	echo patching gdb
+	patch -d gdb-$GDBVER -p1 < gdb-patch.txt || exit 1
+
+	rm -rf gdb-$GDBVER.patched
+	mv gdb-$GDBVER gdb-$GDBVER.patched
+fi
 
 for ARCH in $ARCHES; do 
 	if [ "$ARCH" == "arm" ]; then
@@ -51,6 +62,7 @@ for ARCH in $ARCHES; do
 	INSTALLPATH=`pwd`/$TARGET-$GCCVER-$OS-$HOSTARCH
 	BINBUILDPATH=build-binutils-$BINVER-$ARCH-$OS-$HOSTARCH
 	GCCBUILDPATH=build-gcc-$GCCVER-$ARCH-$OS-$HOSTARCH
+	GDBBUILDPATH=build-gdb-$GDBVER-$ARCH-$OS-$HOSTARCH
 	export PATH=$INSTALLPATH/bin:$PATH
 
 	if [ ! -f $BINBUILDPATH/built.txt ]; then
@@ -75,6 +87,15 @@ for ARCH in $ARCHES; do
 		make all-target-libgcc $PARALLEL &&
 		make install-gcc &&
 		make install-target-libgcc &&
+		touch built.txt)
+	fi
+
+	if [ ! -f $GDBBUILDPATH/built.txt ]; then
+		(mkdir -p $GDBBUILDPATH &&
+		cd $GDBBUILDPATH &&
+		../gdb-$GDBVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH &&
+		make $PARALLEL &&
+		make install &&
 		touch built.txt)
 	fi
 done
