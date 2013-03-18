@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 OS=`uname`
 HOSTARCH=`uname -m`
@@ -12,14 +12,24 @@ if [ "x$ARCHES" = "x" ]; then
 	exit 1
 fi
 
-# load GCCVER and BINVER
-. toolvers
-
-UNAME=`uname`
-if [ "$UNAME" = "Darwin" ]; then
+if [ "$OS" = "Darwin" ]; then
 	export CPPFLAGS=-I/opt/local/include
 	export LDFLAGS=-L/opt/local/lib
 fi
+if [ "$OS" = "FreeBSD" ]; then
+	export CPPFLAGS=-I/usr/local/include
+	export LDFLAGS=-L/usr/local/lib
+fi
+MAKE=make
+if [ "$OS" = "FreeBSD" ]; then
+	MAKE=gmake
+fi
+if [ "$HOSTARCH" = "amd64" ]; then
+	HOSTARCH=x86_64
+fi
+
+# load GCCVER and BINVER
+. toolvers
 
 if [ "$FETCH" = "1" ]; then
     ARCHSUFFIX=.bz2
@@ -72,13 +82,14 @@ for ARCH in $ARCHES; do
 	export PATH=$INSTALLPATH/bin:$PATH
 
 	if [ ! -f $BINBUILDPATH/built.txt ]; then
-		(mkdir -p $BINBUILDPATH &&
-		cd $BINBUILDPATH &&
+		mkdir -p $BINBUILDPATH
+		pushd $BINBUILDPATH &&
 		../binutils-$BINVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH &&
-		#make configure-host &&
-		make $PARALLEL &&
-		make install &&
-		touch built.txt)
+		#$MAKE configure-host &&
+		$MAKE $PARALLEL &&
+		$MAKE install &&
+		touch built.txt || exit 1
+		popd
 	fi
 
 	if [ ! -f $GCCBUILDPATH/built.txt ]; then
@@ -86,22 +97,24 @@ for ARCH in $ARCHES; do
 		if [ $ARCH == "arm" ]; then
 			ARCH_OPTIONS="--with-cpu=arm926ej-s --with-fpu=vfp"
 		fi
-		(mkdir -p $GCCBUILDPATH &&
-		cd $GCCBUILDPATH &&
+		mkdir -p $GCCBUILDPATH
+		pushd $GCCBUILDPATH &&
 		../gcc-$GCCVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS &&
-		make all-gcc $PARALLEL &&
-		make all-target-libgcc $PARALLEL &&
-		make install-gcc &&
-		make install-target-libgcc &&
-		touch built.txt)
+		$MAKE all-gcc $PARALLEL &&
+		$MAKE all-target-libgcc $PARALLEL &&
+		$MAKE install-gcc &&
+		$MAKE install-target-libgcc &&
+		touch built.txt || exit 1
+		popd
 	fi
 
 	if [ ! -f $GDBBUILDPATH/built.txt ]; then
-		(mkdir -p $GDBBUILDPATH &&
-		cd $GDBBUILDPATH &&
+		mkdir -p $GDBBUILDPATH
+		pushd $GDBBUILDPATH &&
 		../gdb-$GDBVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH &&
 		make $PARALLEL &&
 		make install &&
-		touch built.txt)
+		touch built.txt || exit 1
+		popd
 	fi
 done
