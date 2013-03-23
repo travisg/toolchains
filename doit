@@ -12,6 +12,11 @@ if [ "x$ARCHES" = "x" ]; then
 	exit 1
 fi
 
+
+if [ "$OS" = "Linux" ]; then
+	COUNT=`grep processor /proc/cpuinfo | wc -l`
+	PARALLEL=-j`expr $COUNT + $COUNT`
+fi
 if [ "$OS" = "Darwin" ]; then
 	export CPPFLAGS=-I/opt/local/include
 	export LDFLAGS=-L/opt/local/lib
