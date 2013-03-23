@@ -84,7 +84,7 @@ for ARCH in $ARCHES; do
 	if [ ! -f $BINBUILDPATH/built.txt ]; then
 		mkdir -p $BINBUILDPATH
 		pushd $BINBUILDPATH &&
-		../binutils-$BINVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH &&
+		../binutils-$BINVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
 		#$MAKE configure-host &&
 		$MAKE $PARALLEL &&
 		$MAKE install &&
@@ -99,7 +99,7 @@ for ARCH in $ARCHES; do
 		fi
 		mkdir -p $GCCBUILDPATH
 		pushd $GCCBUILDPATH &&
-		../gcc-$GCCVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS &&
+		../gcc-$GCCVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror &&
 		$MAKE all-gcc $PARALLEL &&
 		$MAKE all-target-libgcc $PARALLEL &&
 		$MAKE install-gcc &&
@@ -111,7 +111,7 @@ for ARCH in $ARCHES; do
 	if [ ! -f $GDBBUILDPATH/built.txt ]; then
 		mkdir -p $GDBBUILDPATH
 		pushd $GDBBUILDPATH &&
-		../gdb-$GDBVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH &&
+		../gdb-$GDBVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
 		make $PARALLEL &&
 		make install &&
 		touch built.txt || exit 1
