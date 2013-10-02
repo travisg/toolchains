@@ -1,0 +1,15 @@
+diff -ru gdb-7.6/gdb/configure.tgt gdb-7.6.patched/gdb/configure.tgt
+--- gdb-7.6/gdb/configure.tgt	2013-03-05 05:37:10.000000000 -0800
++++ gdb-7.6.patched/gdb/configure.tgt	2013-10-01 19:58:55.000000000 -0700
+@@ -646,6 +646,11 @@
+ 			solib-svr4.o symfile-mem.o linux-tdep.o linux-record.o"
+ 	build_gdbserver=yes
+ 	;;
++x86_64-*-elf*)
++	# Target: x86-64
++	gdb_target_obs="amd64-tdep.o i386-tdep.o \
++			i387-tdep.o"
++	;;
+ x86_64-*-freebsd* | x86_64-*-kfreebsd*-gnu)
+ 	# Target: FreeBSD/amd64
+ 	gdb_target_obs="amd64-tdep.o amd64fbsd-tdep.o i386-tdep.o \
