@@ -2,124 +2,136 @@
 
 OS=`uname`
 HOSTARCH=`uname -m`
-ARCHSUFFIX=.xz
 PARALLEL=-j8
 GNU_FTP=ftp://ftp.gnu.org/gnu
 
 if [ "x$ARCHES" = "x" ]; then
-	echo need to specify architectures to build in the ARCHES environment variable
-	echo ie. ARCHES=\"arm sh\"
-	exit 1
+    echo need to specify architectures to build in the ARCHES environment variable
+    echo ie. ARCHES=\"arm sh\"
+    exit 1
 fi
 
 
 if [ "$OS" = "Linux" ]; then
-	COUNT=`grep processor /proc/cpuinfo | wc -l`
-	PARALLEL=-j`expr $COUNT + $COUNT`
+    COUNT=`grep processor /proc/cpuinfo | wc -l`
+    PARALLEL=-j`expr $COUNT + $COUNT`
 fi
 if [ "$OS" = "Darwin" ]; then
-	export CPPFLAGS=-I/opt/local/include
-	export LDFLAGS=-L/opt/local/lib
+    export CPPFLAGS=-I/opt/local/include
+    export LDFLAGS=-L/opt/local/lib
 fi
 if [ "$OS" = "FreeBSD" ]; then
-	export CPPFLAGS=-I/usr/local/include
-	export LDFLAGS=-L/usr/local/lib
+    export CPPFLAGS=-I/usr/local/include
+    export LDFLAGS=-L/usr/local/lib
 fi
 MAKE=make
 if [ "$OS" = "FreeBSD" ]; then
-	MAKE=gmake
+    MAKE=gmake
 fi
 if [ "$HOSTARCH" = "amd64" ]; then
-	HOSTARCH=x86_64
+    HOSTARCH=x86_64
 fi
 
 # load GCCVER and BINVER
 . toolvers
 
 if [ "$FETCH" = "1" ]; then
-    ARCHSUFFIX=.bz2
-    wget -N $GNU_FTP/binutils/binutils-$BINVER.tar$ARCHSUFFIX
-    wget -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar$ARCHSUFFIX
-    wget -N $GNU_FTP/gdb/gdb-$GDBVER.tar$ARCHSUFFIX
+    wget -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
+    wget -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
+    wget -N $GNU_FTP/gdb/gdb-$GDBVER.tar.bz2
+    wget -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
+    wget -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
+    wget -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
 fi
 
-if [ ! -d binutils-$BINVER.patched ]; then
-	echo extracting binutils-$BINVER.tar${ARCHSUFFIX}
-	rm -rf binutils-$BINVER
-	tar xf binutils-$BINVER.tar${ARCHSUFFIX} || exit 1
-	echo patching binutils
-	patch -d binutils-$BINVER -p1 < binutils-patch.txt || exit 1
-	rm -rf binutils-$BINVER.patched
-	mv binutils-$BINVER binutils-$BINVER.patched
-fi
-if [ ! -d gcc-$GCCVER.patched ]; then
-	echo extracting gcc-$GCCVER.tar${ARCHSUFFIX}
-	rm -rf gcc-$GCCVER
-	tar xf gcc-$GCCVER.tar${ARCHSUFFIX} || exit 1
-	echo patching gcc
-	patch -d gcc-$GCCVER -p1 < gcc-patch.txt || exit 1
+function extract-tool()
+{
+    #echo "extract-tool " $1 $2 $3 $4
 
-	rm -rf gcc-$GCCVER.patched
-	mv gcc-$GCCVER gcc-$GCCVER.patched
-fi
-if [ ! -d gdb-$GDBVER.patched ]; then
-	echo extracting gdb-$GDBVER.tar${ARCHSUFFIX}
-	rm -rf gdb-$GDBVER
-	tar xf gdb-$GDBVER.tar${ARCHSUFFIX} || exit 1
-	echo patching gdb
-	patch -d gdb-$GDBVER -p1 < gdb-patch.txt || exit 1
+    TARFILE=${1}-${2}.tar$3
+    TARGETDIR=${1}-${2}
+    if [ -f ${TARGETDIR}/.extracted ]; then
+        echo "$TARFILE already extracted into $TARGETDIR, skipping"
+        return 0
+    fi
+    if [ ! -f $TARFILE ]; then
+        echo "error, missing $TARFILE"
+        exit 1
+    fi
 
-	rm -rf gdb-$GDBVER.patched
-	mv gdb-$GDBVER gdb-$GDBVER.patched
-fi
+    echo extracting $TARFILE
+    rm -rf $TARGETDIR
+    tar xf $TARFILE || exit 1
 
-for ARCH in $ARCHES; do 
-	if [ "$ARCH" == "arm" ]; then
-		TARGET=arm-eabi
-	else
-		TARGET=$ARCH-elf
-	fi
+    if [ ! -z "$4" ]; then
+        echo patching $1
+        patch -d $TARGETDIR -p1 < $4 || exit 1
+    fi
 
-	INSTALLPATH=`pwd`/$TARGET-$GCCVER-$OS-$HOSTARCH
-	BINBUILDPATH=build-binutils-$BINVER-$ARCH-$OS-$HOSTARCH
-	GCCBUILDPATH=build-gcc-$GCCVER-$ARCH-$OS-$HOSTARCH
-	GDBBUILDPATH=build-gdb-$GDBVER-$ARCH-$OS-$HOSTARCH
-	export PATH=$INSTALLPATH/bin:$PATH
+    touch $TARGETDIR/.extracted || exit 1
+}
 
-	if [ ! -f $BINBUILDPATH/built.txt ]; then
-		mkdir -p $BINBUILDPATH
-		pushd $BINBUILDPATH &&
-		../binutils-$BINVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
-		#$MAKE configure-host &&
-		$MAKE $PARALLEL &&
-		$MAKE install &&
-		touch built.txt || exit 1
-		popd
-	fi
+extract-tool binutils $BINVER .bz2 binutils-patch.txt
+extract-tool gcc $GCCVER .bz2 gcc-patch.txt
+extract-tool gdb $GDBVER .bz2 gdb-patch.txt
+extract-tool gmp $GMPVER .bz2
+extract-tool mpc $MPCVER .gz
+extract-tool mpfr $MPFRVER .bz2
 
-	if [ ! -f $GCCBUILDPATH/built.txt ]; then
-		ARCH_OPTIONS=
-		if [ $ARCH == "arm" ]; then
-			ARCH_OPTIONS="--with-cpu=arm926ej-s --with-fpu=vfp"
-		fi
-		mkdir -p $GCCBUILDPATH
-		pushd $GCCBUILDPATH &&
-		../gcc-$GCCVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror &&
-		$MAKE all-gcc $PARALLEL &&
-		$MAKE all-target-libgcc $PARALLEL &&
-		$MAKE install-gcc &&
-		$MAKE install-target-libgcc &&
-		touch built.txt || exit 1
-		popd
-	fi
+# link the last three libs into gcc
+pushd gcc-$GCCVER
+ln -sf ../gmp-$GMPVER gmp
+ln -sf ../mpc-$MPCVER mpc
+ln -sf ../mpfr-$MPFRVER mpfr
+popd
 
-	if [ ! -f $GDBBUILDPATH/built.txt ]; then
-		mkdir -p $GDBBUILDPATH
-		pushd $GDBBUILDPATH &&
-		../gdb-$GDBVER.patched/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
-		make $PARALLEL &&
-		make install &&
-		touch built.txt || exit 1
-		popd
-	fi
+for ARCH in $ARCHES; do
+    if [ "$ARCH" == "arm" ]; then
+        TARGET=arm-eabi
+    else
+        TARGET=$ARCH-elf
+    fi
+
+    INSTALLPATH=`pwd`/$TARGET-$GCCVER-$OS-$HOSTARCH
+    BINBUILDPATH=build-binutils-$BINVER-$ARCH-$OS-$HOSTARCH
+    GCCBUILDPATH=build-gcc-$GCCVER-$ARCH-$OS-$HOSTARCH
+    GDBBUILDPATH=build-gdb-$GDBVER-$ARCH-$OS-$HOSTARCH
+    export PATH=$INSTALLPATH/bin:$PATH
+
+    if [ ! -f $BINBUILDPATH/built.txt ]; then
+        mkdir -p $BINBUILDPATH
+        pushd $BINBUILDPATH &&
+        ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
+        #$MAKE configure-host &&
+        $MAKE $PARALLEL &&
+        $MAKE install &&
+        touch built.txt || exit 1
+        popd
+    fi
+
+    if [ ! -f $GCCBUILDPATH/built.txt ]; then
+        ARCH_OPTIONS=
+        if [ $ARCH == "arm" ]; then
+            ARCH_OPTIONS="--with-cpu=arm926ej-s --with-fpu=vfp"
+        fi
+        mkdir -p $GCCBUILDPATH
+        pushd $GCCBUILDPATH &&
+        ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror &&
+        $MAKE all-gcc $PARALLEL &&
+        $MAKE all-target-libgcc $PARALLEL &&
+        $MAKE install-gcc &&
+        $MAKE install-target-libgcc &&
+        touch built.txt || exit 1
+        popd
+    fi
+
+    if [ ! -f $GDBBUILDPATH/built.txt ]; then
+        mkdir -p $GDBBUILDPATH
+        pushd $GDBBUILDPATH &&
+        ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
+        make $PARALLEL &&
+        make install &&
+        touch built.txt || exit 1
+        popd
+    fi
 done

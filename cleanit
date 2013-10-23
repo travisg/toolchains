@@ -4,6 +4,9 @@
 . ./toolvers
 
 rm -rf build-*
-rm -rf gcc-$GCCVER gcc-$GCCVER.patched
-rm -rf binutils-$BINVER binutils-$BINVER.patched
-rm -rf gdb-$GDBVER gdb-$GDBVER.patched
+rm -rf gcc-$GCCVER
+rm -rf binutils-$BINVER
+rm -rf gdb-$GDBVER
+rm -rf gmp-$GMPVER
+rm -rf mpc-$MPCVER
+rm -rf mpfr-$MPFRVER
