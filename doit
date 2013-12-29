@@ -4,6 +4,7 @@ OS=`uname`
 HOSTARCH=`uname -m`
 PARALLEL=-j8
 GNU_FTP=ftp://ftp.gnu.org/gnu
+FETCH=1
 
 if [ "x$ARCHES" = "x" ]; then
     echo need to specify architectures to build in the ARCHES environment variable
@@ -36,12 +37,24 @@ fi
 . toolvers
 
 if [ "$FETCH" = "1" ]; then
-    wget -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
-    wget -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
-    wget -N $GNU_FTP/gdb/gdb-$GDBVER.tar.bz2
-    wget -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
-    wget -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
-    wget -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
+    if [ ! -f binutils-$BINVER.tar.bz2 ]; then
+        wget -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
+    fi
+    if [ ! -f gcc-$GCCVER.tar.bz2 ]; then
+        wget -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
+    fi
+    if [ ! -f gdb-$GDBVER.tar.bz2 ]; then
+        wget -N $GNU_FTP/gdb/gdb-$GDBVER.tar.bz2
+    fi
+    if [ ! -f mpfr-$MPFRVER.tar.bz2 ]; then
+        wget -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
+    fi
+    if [ ! -f mpc-$MPCVER.tar.gz ]; then
+        wget -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
+    fi
+    if [ ! -f gmp-$GMPVER.tar.bz2 ]; then
+        wget -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
+    fi
 fi
 
 function extract-tool()
@@ -71,12 +84,15 @@ function extract-tool()
     touch $TARGETDIR/.extracted || exit 1
 }
 
-extract-tool binutils $BINVER .bz2 binutils-patch.txt
-extract-tool gcc $GCCVER .bz2 gcc-patch.txt
-extract-tool gdb $GDBVER .bz2 gdb-patch.txt
-extract-tool gmp $GMPVER .bz2
-extract-tool mpc $MPCVER .gz
-extract-tool mpfr $MPFRVER .bz2
+if [ ! -f .extracted-stamp ]; then
+    extract-tool binutils $BINVER .bz2 binutils-patch.txt
+    extract-tool gcc $GCCVER .bz2 gcc-patch.txt
+    extract-tool gdb $GDBVER .bz2 gdb-patch.txt
+    extract-tool gmp $GMPVER .bz2
+    extract-tool mpc $MPCVER .gz
+    extract-tool mpfr $MPFRVER .bz2
+    touch .extracted-stamp
+fi
 
 # link the last three libs into gcc
 pushd gcc-$GCCVER
