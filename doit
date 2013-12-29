@@ -84,12 +84,15 @@ function extract-tool()
     touch $TARGETDIR/.extracted || exit 1
 }
 
-extract-tool binutils $BINVER .bz2 binutils-patch.txt
-extract-tool gcc $GCCVER .bz2 gcc-patch.txt
-extract-tool gdb $GDBVER .bz2 gdb-patch.txt
-extract-tool gmp $GMPVER .bz2
-extract-tool mpc $MPCVER .gz
-extract-tool mpfr $MPFRVER .bz2
+if [ ! -f .extracted-stamp ]; then
+    extract-tool binutils $BINVER .bz2 binutils-patch.txt
+    extract-tool gcc $GCCVER .bz2 gcc-patch.txt
+    extract-tool gdb $GDBVER .bz2 gdb-patch.txt
+    extract-tool gmp $GMPVER .bz2
+    extract-tool mpc $MPCVER .gz
+    extract-tool mpfr $MPFRVER .bz2
+    touch .extracted-stamp
+fi
 
 # link the last three libs into gcc
 pushd gcc-$GCCVER

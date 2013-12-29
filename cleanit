@@ -10,3 +10,4 @@ rm -rf gdb-$GDBVER
 rm -rf gmp-$GMPVER
 rm -rf mpc-$MPCVER
 rm -rf mpfr-$MPFRVER
+rm -f .extracted-stamp
