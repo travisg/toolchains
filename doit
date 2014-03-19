@@ -5,6 +5,7 @@ HOSTARCH=`uname -m`
 PARALLEL=-j8
 GNU_FTP=ftp://ftp.gnu.org/gnu
 FETCH=1
+ARCHIVES=archives
 
 if [ "x$ARCHES" = "x" ]; then
     echo need to specify architectures to build in the ARCHES environment variable
@@ -38,22 +39,22 @@ fi
 
 if [ "$FETCH" = "1" ]; then
     if [ ! -f binutils-$BINVER.tar.bz2 ]; then
-        wget -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
+        wget -P $ARCHIVES -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
     fi
     if [ ! -f gcc-$GCCVER.tar.bz2 ]; then
-        wget -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
+        wget -P $ARCHIVES -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
     fi
     if [ ! -f gdb-$GDBVER.tar.bz2 ]; then
-        wget -N $GNU_FTP/gdb/gdb-$GDBVER.tar.bz2
+        wget -P $ARCHIVES -N $GNU_FTP/gdb/gdb-$GDBVER.tar.bz2
     fi
     if [ ! -f mpfr-$MPFRVER.tar.bz2 ]; then
-        wget -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
+        wget -P $ARCHIVES -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
     fi
     if [ ! -f mpc-$MPCVER.tar.gz ]; then
-        wget -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
+        wget -P $ARCHIVES -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
     fi
     if [ ! -f gmp-$GMPVER.tar.bz2 ]; then
-        wget -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
+        wget -P $ARCHIVES -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
     fi
 fi
 
@@ -67,14 +68,14 @@ function extract-tool()
         echo "$TARFILE already extracted into $TARGETDIR, skipping"
         return 0
     fi
-    if [ ! -f $TARFILE ]; then
+    if [ ! -f $ARCHIVES/$TARFILE ]; then
         echo "error, missing $TARFILE"
         exit 1
     fi
 
     echo extracting $TARFILE
     rm -rf $TARGETDIR
-    tar xf $TARFILE || exit 1
+    tar xf $ARCHIVES/$TARFILE || exit 1
 
     if [ ! -z "$4" ]; then
         echo patching $1
