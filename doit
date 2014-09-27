@@ -44,8 +44,8 @@ if [ "$FETCH" = "1" ]; then
     if [ ! -f gcc-$GCCVER.tar.bz2 ]; then
         wget -P $ARCHIVES -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
     fi
-    if [ ! -f gdb-$GDBVER.tar.bz2 ]; then
-        wget -P $ARCHIVES -N $GNU_FTP/gdb/gdb-$GDBVER.tar.bz2
+    if [ ! -f gdb-$GDBVER.tar.xz ]; then
+        wget -P $ARCHIVES -N $GNU_FTP/gdb/gdb-$GDBVER.tar.xz
     fi
     if [ ! -f mpfr-$MPFRVER.tar.bz2 ]; then
         wget -P $ARCHIVES -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
@@ -88,7 +88,7 @@ function extract-tool()
 if [ ! -f .extracted-stamp ]; then
     extract-tool binutils $BINVER .bz2 binutils-patch.txt
     extract-tool gcc $GCCVER .bz2 gcc-patch.txt
-    extract-tool gdb $GDBVER .bz2 gdb-patch.txt
+    extract-tool gdb $GDBVER .xz gdb-patch.txt
     extract-tool gmp $GMPVER .bz2
     extract-tool mpc $MPCVER .gz
     extract-tool mpfr $MPFRVER .bz2
