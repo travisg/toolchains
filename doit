@@ -21,6 +21,7 @@ fi
 if [ "$OS" = "Darwin" ]; then
     export CPPFLAGS=-I/opt/local/include
     export LDFLAGS=-L/opt/local/lib
+    export CXXFLAGS="-fbracket-depth=1024" 
 fi
 if [ "$OS" = "FreeBSD" ]; then
     export CPPFLAGS=-I/usr/local/include
