@@ -4,10 +4,9 @@ OS=`uname`
 HOSTARCH=`uname -m`
 PARALLEL=-j8
 GNU_FTP=ftp://ftp.gnu.org/gnu
-FETCH=1
 ARCHIVES=archives
 
-if [ "x$ARCHES" = "x" ]; then
+if [ -z "$ARCHES" ]; then
     echo need to specify architectures to build in the ARCHES environment variable
     echo ie. ARCHES=\"arm sh\"
     exit 1
@@ -35,9 +34,20 @@ if [ "$HOSTARCH" = "amd64" ]; then
     HOSTARCH=x86_64
 fi
 
+export CC="cc"
+export CXX="c++"
+
+if [ "$CCACHE" = "1" ]; then
+export CC="ccache $CC"
+export CXX="ccache $CXX"
+fi
+
 # load GCCVER and BINVER
 . toolvers
 
+if [ -z "$FETCH" ]; then
+    FETCH=1
+fi
 if [ "$FETCH" = "1" ]; then
     if [ ! -f binutils-$BINVER.tar.bz2 ]; then
         wget -P $ARCHIVES -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
