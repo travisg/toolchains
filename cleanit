@@ -3,6 +3,7 @@
 # load GCCVER and BINVER
 . ./toolvers
 
+rm -f build.log
 rm -rf build-*
 rm -rf gcc-$GCCVER
 rm -rf binutils-$BINVER

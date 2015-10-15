@@ -3,9 +3,44 @@
 OS=`uname`
 HOSTARCH=`uname -m`
 PARALLEL=
+FETCH=0
 GNU_FTP=ftp://ftp.gnu.org/gnu
 ARCHIVES=archives
 PATCHES=./patches/
+# Get absolute path, will spawn a subshell then exit so our pwd is retained
+SCRIPTROOT=$(cd "$(dirname $BASH_SOURCE[0])" && pwd)
+
+function log()
+{
+    "$@" 2>&1 | tee -a $SCRIPTROOT/build.log
+}
+
+function extract-tool()
+{
+    #echo "extract-tool " $1 $2 $3 $4
+
+    TARFILE=${1}-${2}.tar$3
+    TARGETDIR=${1}-${2}
+    if [ -f ${TARGETDIR}/.extracted ]; then
+        log echo "$TARFILE already extracted into $TARGETDIR, skipping"
+        return 0
+    fi
+    if [ ! -f $ARCHIVES/$TARFILE ]; then
+        log echo "error, missing $TARFILE"
+        exit 1
+    fi
+
+    log echo extracting $TARFILE
+    rm -rf $TARGETDIR
+    tar xf $ARCHIVES/$TARFILE || exit 1
+
+    if [ ! -z "$4" ]; then
+        log echo patching $1
+        log patch -d $TARGETDIR -p1 < $4 || exit 1
+    fi
+
+    touch $TARGETDIR/.extracted || exit 1
+}
 
 if [ "$OS" = "Linux" ]; then
     COUNT=`grep processor /proc/cpuinfo | wc -l`
@@ -32,9 +67,9 @@ ARGS=`getopt -o a:cfj: --long arch:,cache,fetch,parallel:  -- "$@"`
 
 if [ $# == "0" ]; then
     echo "Options"
-    echo " -a <arch list>                architectures to build"
+    echo " -a <arch list>               architectures to build"
     echo "    example: -a 'arm x86'"
-    echo " -c                           use ccache"
+    echo " -c                           use compilation cache (ccache must be installed)"
     echo " -f                           fetch source releases from upstream"
     echo " -j<#>                        use <#> parallel workers to build [default: 8]"
     exit 1
@@ -48,7 +83,7 @@ while true; do
         -j|--parallel ) PARALLEL="-j$2" ; shift 2 ;;
         -f|--fetch ) FETCH=1 ; shift ;;
         -- ) shift ; break ;;
-        * ) echo "parse error :(" ; exit 1 ;;
+        * ) echo "unrecognized option '$1'" ; exit 1 ;;
     esac
 done
 
@@ -72,51 +107,24 @@ fi
 
 if [ "$FETCH" = "1" ]; then
     if [ ! -f binutils-$BINVER.tar.bz2 ]; then
-        wget -P $ARCHIVES -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
+       log wget -P $ARCHIVES -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
     fi
     if [ ! -f gcc-$GCCVER.tar.bz2 ]; then
-        wget -P $ARCHIVES -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
+        log wget -P $ARCHIVES -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
     fi
     if [ ! -f gdb-$GDBVER.tar.xz ]; then
-        wget -P $ARCHIVES -N $GNU_FTP/gdb/gdb-$GDBVER.tar.xz
+        log wget -P $ARCHIVES -N $GNU_FTP/gdb/gdb-$GDBVER.tar.xz
     fi
     if [ ! -f mpfr-$MPFRVER.tar.bz2 ]; then
-        wget -P $ARCHIVES -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
+        log wget -P $ARCHIVES -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
     fi
     if [ ! -f mpc-$MPCVER.tar.gz ]; then
-        wget -P $ARCHIVES -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
+        log wget -P $ARCHIVES -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
     fi
     if [ ! -f gmp-$GMPVER.tar.bz2 ]; then
-        wget -P $ARCHIVES -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
+        log wget -P $ARCHIVES -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
     fi
 fi
-
-function extract-tool()
-{
-    #echo "extract-tool " $1 $2 $3 $4
-
-    TARFILE=${1}-${2}.tar$3
-    TARGETDIR=${1}-${2}
-    if [ -f ${TARGETDIR}/.extracted ]; then
-        echo "$TARFILE already extracted into $TARGETDIR, skipping"
-        return 0
-    fi
-    if [ ! -f $ARCHIVES/$TARFILE ]; then
-        echo "error, missing $TARFILE"
-        exit 1
-    fi
-
-    echo extracting $TARFILE
-    rm -rf $TARGETDIR
-    tar xf $ARCHIVES/$TARFILE || exit 1
-
-    if [ ! -z "$4" ]; then
-        echo patching $1
-        patch -d $TARGETDIR -p1 < $4 || exit 1
-    fi
-
-    touch $TARGETDIR/.extracted || exit 1
-}
 
 if [ ! -f .extracted-stamp ]; then
     extract-tool binutils $BINVER .bz2 $PATCHES/binutils-patch.txt
@@ -148,29 +156,32 @@ for ARCH in $ARCHES; do
     GDBBUILDPATH=build-gdb-$GDBVER-$ARCH-$OS-$HOSTARCH
     export PATH=$INSTALLPATH/bin:$PATH
 
+    # Building Binutils
     if [ ! -f $BINBUILDPATH/built.txt ]; then
         mkdir -p $BINBUILDPATH
         pushd $BINBUILDPATH &&
-        ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
+        log ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
         #$MAKE configure-host &&
-        $MAKE $PARALLEL &&
-        $MAKE install &&
+        log $MAKE $PARALLEL &&
+        log $MAKE install &&
         touch built.txt || exit 1
         popd
     fi
 
+    # Building GCC
     if [ ! -f $GCCBUILDPATH/built.txt ]; then
         ARCH_OPTIONS=
         if [ $ARCH == "arm" ]; then
             ARCH_OPTIONS="--with-cpu=arm926ej-s --with-fpu=vfp"
         fi
+
         mkdir -p $GCCBUILDPATH
         pushd $GCCBUILDPATH &&
-        ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror &&
-        $MAKE all-gcc $PARALLEL &&
-        $MAKE all-target-libgcc $PARALLEL &&
-        $MAKE install-gcc &&
-        $MAKE install-target-libgcc &&
+        log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror &&
+        log $MAKE all-gcc $PARALLEL &&
+        log $MAKE all-target-libgcc $PARALLEL &&
+        log $MAKE install-gcc &&
+        log $MAKE install-target-libgcc &&
         touch built.txt || exit 1
         popd
     fi
@@ -178,9 +189,9 @@ for ARCH in $ARCHES; do
     if [ ! -f $GDBBUILDPATH/built.txt ]; then
         mkdir -p $GDBBUILDPATH
         pushd $GDBBUILDPATH &&
-        ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
-        make $PARALLEL &&
-        make install &&
+        log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
+        log make $PARALLEL &&
+        log make install &&
         touch built.txt || exit 1
         popd
     fi
