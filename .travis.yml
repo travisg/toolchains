@@ -1,0 +1,27 @@
+language: c
+script: ./doit -q -j 4 -f -a "$ARCH"
+env:
+    - ARCH=arm
+    - ARCH=aarch64
+    - ARCH=i386
+    - ARCH=i686
+    - ARCH=m68k
+    - ARCH=microblaze
+    - ARCH=mips
+    - ARCH=powerpc
+    - ARCH=sh
+    - ARCH=x86_64
+
+addons:
+  apt:
+    packages:
+    - texinfo
+
+# run in a container
+sudo: false
+
+# try to cache the toolchain download
+cache:
+  directories:
+  - archives
+
