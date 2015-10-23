@@ -10,6 +10,9 @@ PATCHES=./patches/
 # Get absolute path, will spawn a subshell then exit so our pwd is retained
 SCRIPTROOT=$(cd "$(dirname $0)" && pwd)
 
+# Cause errors in pipes to return failure when necessary
+set -o pipefail
+
 function help()
 {
     echo "Options"
