@@ -4,6 +4,7 @@ OS=`uname`
 HOSTARCH=`uname -m`
 PARALLEL=
 FETCH=0
+QUIET=0
 GNU_FTP=ftp://ftp.gnu.org/gnu
 ARCHIVES=archives
 PATCHES=./patches/
@@ -12,6 +13,17 @@ SCRIPTROOT=$(cd "$(dirname $0)" && pwd)
 
 # Cause errors in pipes to return failure when necessary
 set -o pipefail
+set -e
+
+function err() {
+    echo error during build
+    if [ "$QUIET" = "1" ]; then
+        echo dumping build log...
+        cat $SCRIPTROOT/build.log
+    fi
+}
+
+trap err ERR
 
 function help()
 {
@@ -22,12 +34,17 @@ function help()
     echo " -f                           fetch source releases from upstream"
     echo " -h|-?                        display this help message"
     echo " -j<#>                        use <#> parallel workers to build"
+    echo " -q                           make the build quieter"
     exit 1
 }
 
 function log()
 {
-    "$@" 2>&1 | tee -a $SCRIPTROOT/build.log
+    if [ "$QUIET" = "1" ]; then
+        "$@" >> $SCRIPTROOT/build.log 2>&1
+    else
+        "$@" 2>&1 | tee -a $SCRIPTROOT/build.log
+    fi
 }
 
 function extract-tool()
@@ -45,6 +62,7 @@ function extract-tool()
         exit 1
     fi
 
+    echo extracting $TARFILE
     log echo extracting $TARFILE
     rm -rf $TARGETDIR
     tar xf $ARCHIVES/$TARFILE || exit 1
@@ -82,13 +100,14 @@ if [ $# == "0" ]; then
     help
 fi
 
-while getopts a:cfhj:? arg
+while getopts a:cfhj:q? arg
 do
     case $arg in
         a ) ARCHES=$OPTARG ;;
         c ) CCACHE=1 ;;
         j ) PARALLEL="-j$OPTARG" ;;
         f ) FETCH=1 ;;
+        q ) QUIET=1 ;;
         h ) help ;;
         ? ) help ;;
         * ) echo "unrecognized option '$arg'" ; exit 1 ;;
@@ -110,6 +129,7 @@ export CC="ccache $CC"
 export CXX="ccache $CXX"
 fi
 
+log date
 log echo "ARCHES='$ARCHES' PARALLEL='$PARALLEL' FETCH='$FETCH' CCACHE='$CCACHE'"
 # load GCCVER and BINVER
 . toolvers
@@ -167,41 +187,45 @@ for ARCH in $ARCHES; do
 
     # Building Binutils
     if [ ! -f $BINBUILDPATH/built.txt ]; then
+        echo building binutils
         mkdir -p $BINBUILDPATH
-        pushd $BINBUILDPATH &&
-        log ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
-        #$MAKE configure-host &&
-        log $MAKE $PARALLEL &&
-        log $MAKE install &&
-        touch built.txt || exit 1
+        pushd $BINBUILDPATH
+        log ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
+        log $MAKE $PARALLEL
+        log $MAKE install
+        touch built.txt
         popd
     fi
 
     # Building GCC
     if [ ! -f $GCCBUILDPATH/built.txt ]; then
+        echo building gcc
         ARCH_OPTIONS=
         if [ $ARCH == "arm" ]; then
             ARCH_OPTIONS="--with-cpu=arm926ej-s --with-fpu=vfp"
         fi
 
         mkdir -p $GCCBUILDPATH
-        pushd $GCCBUILDPATH &&
-        log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror &&
-        log $MAKE all-gcc $PARALLEL &&
-        log $MAKE all-target-libgcc $PARALLEL &&
-        log $MAKE install-gcc &&
-        log $MAKE install-target-libgcc &&
-        touch built.txt || exit 1
+        pushd $GCCBUILDPATH
+        log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror
+        log $MAKE all-gcc $PARALLEL
+        log $MAKE all-target-libgcc $PARALLEL
+        log $MAKE install-gcc
+        log $MAKE install-target-libgcc
+        touch built.txt
         popd
     fi
 
     if [ ! -f $GDBBUILDPATH/built.txt ]; then
+        echo building gdb
         mkdir -p $GDBBUILDPATH
-        pushd $GDBBUILDPATH &&
-        log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror &&
-        log make $PARALLEL &&
-        log make install &&
-        touch built.txt || exit 1
+        pushd $GDBBUILDPATH
+        log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
+        log make $PARALLEL
+        log make install
+        touch built.txt
         popd
     fi
 done
+
+echo all done
