@@ -13,14 +13,15 @@ SCRIPTROOT=$(cd "$(dirname $0)" && pwd)
 
 # Cause errors in pipes to return failure when necessary
 set -o pipefail
-set -e
 
 function err() {
-    echo error during build
+    echo "doit: error during build"
     if [ "$QUIET" = "1" ]; then
-        echo dumping build log...
-        cat $SCRIPTROOT/build.log
+        echo "doit: dumping last 50 lines of build log..."
+        echo "doit: see $SCRIPTROOT/build.log for the full details"
+        tail -50 $SCRIPTROOT/build.log
     fi
+    exit 1
 }
 
 trap err ERR
@@ -29,7 +30,7 @@ function help()
 {
     echo "Options"
     echo " -a <arch list>               architectures to build"
-    echo "    example: -a 'arm x86'"
+    echo "    example: -a 'arm' or -a 'arm i386 x86_64' for multiple"
     echo " -c                           use compilation cache (ccache must be installed)"
     echo " -f                           fetch source releases from upstream"
     echo " -h|-?                        display this help message"
@@ -149,19 +150,15 @@ if [ "$FETCH" = "1" ]; then
         log wget -P $ARCHIVES -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
     fi
     if [ ! -f gdb-$GDBVER.tar.xz ]; then
-        echo fetching gdb-$GDBVER
         log wget -P $ARCHIVES -N $GNU_FTP/gdb/gdb-$GDBVER.tar.xz
     fi
     if [ ! -f mpfr-$MPFRVER.tar.bz2 ]; then
-        echo fetching mpfr-$MPFRVER
         log wget -P $ARCHIVES -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
     fi
     if [ ! -f mpc-$MPCVER.tar.gz ]; then
-        echo fetching mpc-$MPCVER
         log wget -P $ARCHIVES -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
     fi
     if [ ! -f gmp-$GMPVER.tar.bz2 ]; then
-        echo fetching gmp-$GMPVER
         log wget -P $ARCHIVES -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
     fi
 fi
@@ -184,6 +181,7 @@ ln -sf ../mpfr-$MPFRVER mpfr
 popd
 
 for ARCH in $ARCHES; do
+    echo building for arch $ARCH
     if [ "$ARCH" == "arm" ]; then
         TARGET=arm-eabi
     else
