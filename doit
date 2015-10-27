@@ -121,6 +121,11 @@ if [ -z "$ARCHES" ]; then
     exit 1
 fi
 
+if [ -z $(which makeinfo) ]; then
+    echo makeinfo not found. On debian/ubuntu this is provided by the texinfo package.
+    exit 1
+fi
+
 export CC="cc"
 export CXX="c++"
 
