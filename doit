@@ -141,21 +141,27 @@ log echo "ARCHES='$ARCHES' PARALLEL='$PARALLEL' FETCH='$FETCH' CCACHE='$CCACHE'"
 
 if [ "$FETCH" = "1" ]; then
     if [ ! -f binutils-$BINVER.tar.bz2 ]; then
+       echo fetching binutils-$BINVER
        log wget -P $ARCHIVES -N $GNU_FTP/binutils/binutils-$BINVER.tar.bz2
     fi
     if [ ! -f gcc-$GCCVER.tar.bz2 ]; then
+        echo fetching gcc-$GCCVER
         log wget -P $ARCHIVES -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
     fi
     if [ ! -f gdb-$GDBVER.tar.xz ]; then
+        echo fetching gdb-$GDBVER
         log wget -P $ARCHIVES -N $GNU_FTP/gdb/gdb-$GDBVER.tar.xz
     fi
     if [ ! -f mpfr-$MPFRVER.tar.bz2 ]; then
+        echo fetching mpfr-$MPFRVER
         log wget -P $ARCHIVES -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
     fi
     if [ ! -f mpc-$MPCVER.tar.gz ]; then
+        echo fetching mpc-$MPCVER
         log wget -P $ARCHIVES -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
     fi
     if [ ! -f gmp-$GMPVER.tar.bz2 ]; then
+        echo fetching gmp-$GMPVER
         log wget -P $ARCHIVES -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
     fi
 fi
