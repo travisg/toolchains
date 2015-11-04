@@ -150,15 +150,19 @@ if [ "$FETCH" = "1" ]; then
         log wget -P $ARCHIVES -N $GNU_FTP/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
     fi
     if [ ! -f gdb-$GDBVER.tar.xz ]; then
+        echo fetching gdb-$GDBVER
         log wget -P $ARCHIVES -N $GNU_FTP/gdb/gdb-$GDBVER.tar.xz
     fi
     if [ ! -f mpfr-$MPFRVER.tar.bz2 ]; then
+        echo fetching mpfr-$MPFRVER
         log wget -P $ARCHIVES -N $GNU_FTP/mpfr/mpfr-$MPFRVER.tar.bz2
     fi
     if [ ! -f mpc-$MPCVER.tar.gz ]; then
+        echo fetching mpc-$MPCVER
         log wget -P $ARCHIVES -N $GNU_FTP/mpc/mpc-$MPCVER.tar.gz
     fi
     if [ ! -f gmp-$GMPVER.tar.bz2 ]; then
+        echo fetching gmp-$GMPVER
         log wget -P $ARCHIVES -N $GNU_FTP/gmp/gmp-$GMPVER.tar.bz2
     fi
 fi
@@ -174,14 +178,14 @@ if [ ! -f .extracted-stamp ]; then
 fi
 
 # link the last three libs into gcc
-pushd gcc-$GCCVER
+log pushd gcc-$GCCVER
 ln -sf ../gmp-$GMPVER gmp
 ln -sf ../mpc-$MPCVER mpc
 ln -sf ../mpfr-$MPFRVER mpfr
-popd
+log popd
 
 for ARCH in $ARCHES; do
-    echo building for arch $ARCH
+    echo building for arch \"$ARCH\"
     if [ "$ARCH" == "arm" ]; then
         TARGET=arm-eabi
     else
@@ -198,12 +202,12 @@ for ARCH in $ARCHES; do
     if [ ! -f $BINBUILDPATH/built.txt ]; then
         echo building binutils
         mkdir -p $BINBUILDPATH
-        pushd $BINBUILDPATH
+        log pushd $BINBUILDPATH
         log ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
         log $MAKE $PARALLEL
         log $MAKE install
         touch built.txt
-        popd
+        log popd
     fi
 
     # Building GCC
@@ -215,25 +219,25 @@ for ARCH in $ARCHES; do
         fi
 
         mkdir -p $GCCBUILDPATH
-        pushd $GCCBUILDPATH
+        log pushd $GCCBUILDPATH
         log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror
         log $MAKE all-gcc $PARALLEL
         log $MAKE all-target-libgcc $PARALLEL
         log $MAKE install-gcc
         log $MAKE install-target-libgcc
         touch built.txt
-        popd
+        log popd
     fi
 
     if [ ! -f $GDBBUILDPATH/built.txt ]; then
         echo building gdb
         mkdir -p $GDBBUILDPATH
-        pushd $GDBBUILDPATH
+        log pushd $GDBBUILDPATH
         log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
         log make $PARALLEL
         log make install
         touch built.txt
-        popd
+        log popd
     fi
 done
 
