@@ -64,7 +64,6 @@ function extract-tool()
     fi
 
     echo extracting $TARFILE
-    log echo extracting $TARFILE
     rm -rf $TARGETDIR
     tar xf $ARCHIVES/$TARFILE || exit 1
 
@@ -178,11 +177,11 @@ if [ ! -f .extracted-stamp ]; then
 fi
 
 # link the last three libs into gcc
-log pushd gcc-$GCCVER
+pushd gcc-$GCCVER
 ln -sf ../gmp-$GMPVER gmp
 ln -sf ../mpc-$MPCVER mpc
 ln -sf ../mpfr-$MPFRVER mpfr
-log popd
+popd
 
 for ARCH in $ARCHES; do
     echo building for arch \"$ARCH\"
@@ -202,12 +201,12 @@ for ARCH in $ARCHES; do
     if [ ! -f $BINBUILDPATH/built.txt ]; then
         echo building binutils
         mkdir -p $BINBUILDPATH
-        log pushd $BINBUILDPATH
+        pushd $BINBUILDPATH
         log ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
         log $MAKE $PARALLEL
         log $MAKE install
         touch built.txt
-        log popd
+        popd
     fi
 
     # Building GCC
@@ -219,25 +218,25 @@ for ARCH in $ARCHES; do
         fi
 
         mkdir -p $GCCBUILDPATH
-        log pushd $GCCBUILDPATH
+        pushd $GCCBUILDPATH
         log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror
         log $MAKE all-gcc $PARALLEL
         log $MAKE all-target-libgcc $PARALLEL
         log $MAKE install-gcc
         log $MAKE install-target-libgcc
         touch built.txt
-        log popd
+        popd
     fi
 
     if [ ! -f $GDBBUILDPATH/built.txt ]; then
         echo building gdb
         mkdir -p $GDBBUILDPATH
-        log pushd $GDBBUILDPATH
+        pushd $GDBBUILDPATH
         log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
         log make $PARALLEL
         log make install
         touch built.txt
-        log popd
+        popd
     fi
 done
 
