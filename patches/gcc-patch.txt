@@ -1,78 +1,203 @@
---- gcc-4.8.2.orig/gcc/config/arm/t-arm-elf	2013-01-10 20:38:27.000000000 +0000
-+++ gcc-4.8.2/gcc/config/arm/t-arm-elf	2013-12-28 22:54:59.000000000 +0000
-@@ -25,22 +25,36 @@
+diff -ruN gcc-5.3.0/gcc/config/arm/t-arm-elf gcc-5.3.0.patched/gcc/config/arm/t-arm-elf
+--- gcc-5.3.0/gcc/config/arm/t-arm-elf	2015-01-05 04:33:28.000000000 -0800
++++ gcc-5.3.0.patched/gcc/config/arm/t-arm-elf	2015-12-10 13:29:14.792309380 -0800
+@@ -16,31 +16,49 @@
+ # along with GCC; see the file COPYING3.  If not see
+ # <http://www.gnu.org/licenses/>.
+ 
+-MULTILIB_OPTIONS     = marm/mthumb
+-MULTILIB_DIRNAMES    = arm thumb
+-MULTILIB_EXCEPTIONS  = 
+-MULTILIB_MATCHES     =
++#MULTILIB_OPTIONS     = marm/mthumb
++#MULTILIB_DIRNAMES    = arm thumb
++#MULTILIB_EXCEPTIONS  = 
++#MULTILIB_MATCHES     =
+ 
+ #MULTILIB_OPTIONS     += mcpu=fa526/mcpu=fa626/mcpu=fa606te/mcpu=fa626te/mcpu=fmp626/mcpu=fa726te
  #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
  #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
  
+-#MULTILIB_OPTIONS      += march=armv7
+-#MULTILIB_DIRNAMES     += thumb2
 +# build a bunch of specialized versions of libcc for particular cores
 +#MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/mcpu=cortex-a8/cortex-a9/march=armv4t/march=armv5t/march=armv5te/march=armv6/march=armv6j/march=armv6k/march=armv6z/march=armv6zk/march=armv7-a/march=armv7-r
 +#MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore cortex-a8 cortex-a9 cortex-m3 armv4t armv5t armv5te armv6 armv6j armv6k armv6z armv6zk armv7-a armv7-r
 +#MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/mcpu=cortex-a8/mcpu=cortex-a9
 +#MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore cortex-a8 cortex-a9
 +
-+MULTILIB_OPTIONS      += march=armv7
-+MULTILIB_DIRNAMES     += thumb2
-+MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
-+MULTILIB_MATCHES      += march?armv7=march?armv7-a
-+MULTILIB_MATCHES      += march?armv7=march?armv7-r
-+MULTILIB_MATCHES      += march?armv7=march?armv7-m
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a15
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a9
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m4
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
++#MULTILIB_OPTIONS      += march=armv7/march=armv6-m
++#MULTILIB_DIRNAMES     += thumb2 v6m
+ #MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
+ #MULTILIB_MATCHES      += march?armv7=march?armv7-a
+ #MULTILIB_MATCHES      += march?armv7=march?armv7-r
+ #MULTILIB_MATCHES      += march?armv7=march?armv7-m
++#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a15
++#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a9
+ #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
+ #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
++#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m4
+ #MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
++#MULTILIB_EXCEPTIONS   += march=armv6* marm/*march=armv6m*
++#MULTILIB_MATCHES      += march?armv6m=mcpu?cortex-m0
++#MULTILIB_MATCHES      += march?armv6m=mcpu?cortex-m0plus
++#MULTILIB_MATCHES      += march?armv6m=mcpu?cortex-m1
 +
 +#MULTILIB_OPTIONS      += mfpu=vfp
 +#MULTILIB_DIRNAMES     += vfp
 +#MULTILIB_MATCHES      += mfpu?vfp=mcpu?arm1136jf-s
 +#MULTILIB_MATCHES      += mfpu?vfp=mcpu?arm1136jzf-s
--#MULTILIB_OPTIONS      += march=armv7
--#MULTILIB_DIRNAMES     += thumb2
--#MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
--#MULTILIB_MATCHES      += march?armv7=march?armv7-a
--#MULTILIB_MATCHES      += march?armv7=march?armv7-r
--#MULTILIB_MATCHES      += march?armv7=march?armv7-m
--#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
--#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
--#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
  
  # Not quite true.  We can support hard-vfp calling in Thumb2, but how do we
  # express that here?  Also, we really need architecture v5e or later
  # (mcrr etc).
-+#MULTILIB_OPTIONS       += mfloat-abi=hard
-+#MULTILIB_DIRNAMES      += fpu
-+#MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
 -MULTILIB_OPTIONS       += mfloat-abi=hard
 -MULTILIB_DIRNAMES      += fpu
 -MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
++#MULTILIB_OPTIONS       += mfloat-abi=hard
++#MULTILIB_DIRNAMES      += fpu
++#MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
  #MULTILIB_EXCEPTIONS    += *mcpu=fa526/*mfloat-abi=hard*
  #MULTILIB_EXCEPTIONS    += *mcpu=fa626/*mfloat-abi=hard*
  
-@@ -56,8 +70,8 @@
+@@ -56,8 +74,8 @@
  # MULTILIB_DIRNAMES   += fpu soft
  # MULTILIB_EXCEPTIONS += *mthumb/*mfloat-abi=hard*
  # 
-+MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
-+MULTILIB_DIRNAMES   += normal interwork
 -# MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
 -# MULTILIB_DIRNAMES   += normal interwork
++#MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
++#MULTILIB_DIRNAMES   += normal interwork
  # 
  # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
  # MULTILIB_DIRNAMES   += elf under
-reverted:
---- gcc-4.8.2.orig/gcc/config/i386/t-x86_64-elf	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-4.8.2/gcc/config/i386/t-x86_64-elf	2013-12-29 12:47:35.000000000 +0000
+@@ -88,3 +106,113 @@
+ # MULTILIB_MATCHES    += mcpu?arm7=mcpu?arm600
+ # MULTILIB_MATCHES    += mcpu?arm7=mcpu?arm610
+ # MULTILIB_MATCHES    += mcpu?arm7=mcpu?arm620
++
++# taken from ARM toolchain 4.9-2015q3-20150921, gcc/config/arm/t-rtems-eabi
++# Custom RTEMS EABI multilibs
++
++MULTILIB_OPTIONS  = mthumb march=armv6-m/march=armv7-a/march=armv7-r/march=armv7-m mfpu=neon/mfpu=vfpv3-d16/mfpu=fpv4-sp-d16 mfloat-abi=hard
++MULTILIB_DIRNAMES = thumb armv6-m armv7-a armv7-r armv7-m neon vfpv3-d16 fpv4-sp-d16 hard
++
++# Enumeration of multilibs
++
++# reject all the combinations we don't want or won't work
++
++MULTILIB_EXCEPTIONS =
++MULTILIB_EXCEPTIONS += mthumb/march=armv6-m/mfpu=neon/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/march=armv6-m/mfpu=neon
++MULTILIB_EXCEPTIONS += mthumb/march=armv6-m/mfpu=vfpv3-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/march=armv6-m/mfpu=vfpv3-d16
++MULTILIB_EXCEPTIONS += mthumb/march=armv6-m/mfpu=fpv4-sp-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/march=armv6-m/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += mthumb/march=armv6-m/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb/march=armv6-m
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-a/mfpu=neon/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-a/mfpu=neon
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-a/mfpu=vfpv3-d16/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-a/mfpu=vfpv3-d16
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-a/mfpu=fpv4-sp-d16/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-a/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-a/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-a
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-r/mfpu=neon/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-r/mfpu=neon
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-r/mfpu=vfpv3-d16/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-r/mfpu=vfpv3-d16
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-r/mfpu=fpv4-sp-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-r/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-r/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-r
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-m/mfpu=neon/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-m/mfpu=neon
++#MULTILIB_EXCEPTIONS += mthumb/march=armv7-m/mfpu=vfpv3-d16/mfloat-abi=hard
++#MULTILIB_EXCEPTIONS += mthumb/march=armv7-m/mfpu=vfpv3-d16
++#MULTILIB_EXCEPTIONS += mthumb/march=armv7-m/mfpu=fpv4-sp-d16/mfloat-abi=hard
++#MULTILIB_EXCEPTIONS += mthumb/march=armv7-m/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += mthumb/march=armv7-m/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb/march=armv7-m
++MULTILIB_EXCEPTIONS += mthumb/mfpu=neon/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/mfpu=neon
++MULTILIB_EXCEPTIONS += mthumb/mfpu=vfpv3-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/mfpu=vfpv3-d16
++MULTILIB_EXCEPTIONS += mthumb/mfpu=fpv4-sp-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mthumb/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += mthumb/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += mthumb
++MULTILIB_EXCEPTIONS += march=armv6-m/mfpu=neon/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv6-m/mfpu=neon
++MULTILIB_EXCEPTIONS += march=armv6-m/mfpu=vfpv3-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv6-m/mfpu=vfpv3-d16
++MULTILIB_EXCEPTIONS += march=armv6-m/mfpu=fpv4-sp-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv6-m/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += march=armv6-m/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv6-m
++# MULTILIB_EXCEPTIONS += march=armv7-a/mfpu=neon/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += march=armv7-a/mfpu=neon
++# MULTILIB_EXCEPTIONS += march=armv7-a/mfpu=vfpv3-d16/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += march=armv7-a/mfpu=vfpv3-d16
++# MULTILIB_EXCEPTIONS += march=armv7-a/mfpu=fpv4-sp-d16/mfloat-abi=hard
++# MULTILIB_EXCEPTIONS += march=armv7-a/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += march=armv7-a/mfloat-abi=hard
++#MULTILIB_EXCEPTIONS += march=armv7-a
++MULTILIB_EXCEPTIONS += march=armv7-r/mfpu=neon/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv7-r/mfpu=neon
++MULTILIB_EXCEPTIONS += march=armv7-r/mfpu=vfpv3-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv7-r/mfpu=vfpv3-d16
++MULTILIB_EXCEPTIONS += march=armv7-r/mfpu=fpv4-sp-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv7-r/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += march=armv7-r/mfloat-abi=hard
++#MULTILIB_EXCEPTIONS += march=armv7-r
++MULTILIB_EXCEPTIONS += march=armv7-m/mfpu=neon/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv7-m/mfpu=neon
++MULTILIB_EXCEPTIONS += march=armv7-m/mfpu=vfpv3-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv7-m/mfpu=vfpv3-d16
++MULTILIB_EXCEPTIONS += march=armv7-m/mfpu=fpv4-sp-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv7-m/mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += march=armv7-m/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += march=armv7-m
++MULTILIB_EXCEPTIONS += mfpu=neon/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mfpu=neon
++MULTILIB_EXCEPTIONS += mfpu=vfpv3-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mfpu=vfpv3-d16
++MULTILIB_EXCEPTIONS += mfpu=fpv4-sp-d16/mfloat-abi=hard
++MULTILIB_EXCEPTIONS += mfpu=fpv4-sp-d16
++MULTILIB_EXCEPTIONS += mfloat-abi=hard
++
++# build a few matches so we only have to specify -mcpu=cortex-* for most stuff
++MULTILIB_MATCHES    += march?armv7-a=mcpu?cortex-a17
++MULTILIB_MATCHES    += march?armv7-a=mcpu?cortex-a15
++MULTILIB_MATCHES    += march?armv7-a=mcpu?cortex-a9
++MULTILIB_MATCHES    += march?armv7-a=mcpu?cortex-a8
++MULTILIB_MATCHES    += march?armv7-a=mcpu?cortex-a7
++MULTILIB_MATCHES    += march?armv7-a=mcpu?cortex-a5
++MULTILIB_MATCHES    += march?armv7-r=mcpu?cortex-r7
++MULTILIB_MATCHES    += march?armv7-r=mcpu?cortex-r5
++MULTILIB_MATCHES    += march?armv7-r=mcpu?cortex-r4
++MULTILIB_MATCHES    += march?armv7-m=mcpu?cortex-m7
++MULTILIB_MATCHES    += march?armv7-m=mcpu?cortex-m4
++MULTILIB_MATCHES    += march?armv7-m=mcpu?cortex-m3
++MULTILIB_MATCHES    += march?armv6-m=mcpu?cortex-m1
++MULTILIB_MATCHES    += march?armv6-m=mcpu?cortex-m0plus
++MULTILIB_MATCHES    += march?armv6-m=mcpu?cortex-m0
++
++
+diff -ruN gcc-5.3.0/gcc/config/i386/t-x86_64-elf gcc-5.3.0.patched/gcc/config/i386/t-x86_64-elf
+--- gcc-5.3.0/gcc/config/i386/t-x86_64-elf	1969-12-31 16:00:00.000000000 -0800
++++ gcc-5.3.0.patched/gcc/config/i386/t-x86_64-elf	2015-12-10 12:10:07.492460504 -0800
 @@ -0,0 +1,4 @@
 +# Add redzoneless libgcc
 +
 +MULTILIB_OPTIONS  += mno-red-zone
 +MULTILIB_DIRNAMES += no-red-zone
 \ No newline at end of file
-reverted:
---- gcc-4.8.2.orig/gcc/config.gcc	2013-10-03 01:47:24.000000000 +0100
-+++ gcc-4.8.2/gcc/config.gcc	2013-12-29 12:06:18.000000000 +0000
-@@ -1213,6 +1213,7 @@
+diff -ruN gcc-5.3.0/gcc/config.gcc gcc-5.3.0.patched/gcc/config.gcc
+--- gcc-5.3.0/gcc/config.gcc	2015-09-10 07:17:53.000000000 -0700
++++ gcc-5.3.0.patched/gcc/config.gcc	2015-12-10 12:10:07.492460504 -0800
+@@ -1375,6 +1375,7 @@
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
  	;;
  x86_64-*-elf*)

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# a script to test the multilib matching of an arm toolchain
+
+TC=arm-eabi-5.3.0-Linux-x86_64/bin/arm-eabi-
+#TC=arm-eabi-
+
+${TC}gcc --print-libgcc-file-name
+
+for c in m0 m0plus m1 m3 m4 m7 r4 a5 a7 a8 a9 a12 a15; do
+    echo $c
+    ${TC}gcc -mcpu=cortex-${c} --print-libgcc-file-name
+    echo $c -mthumb
+    ${TC}gcc -mcpu=cortex-${c} -mthumb --print-libgcc-file-name
+    for f in -mfpu=neon -mfpu=vfpv3-d16 -mfpu=fpv4-sp-d16; do
+         echo $c -mthumb $f
+         ${TC}gcc -mcpu=cortex-${c} -mthumb $f --print-libgcc-file-name
+        for a in -mfloat-abi=hard -mfloat-abi=softfp; do 
+            echo $c -mthumb $f $a
+            ${TC}gcc -mcpu=cortex-${c} -mthumb $f $a --print-libgcc-file-name
+        done
+    done
+done
+
