@@ -232,7 +232,11 @@ for ARCH in $ARCHES; do
         echo building gdb
         mkdir -p $GDBBUILDPATH
         pushd $GDBBUILDPATH
-        log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
+	case "$TARGET" in
+	    aarch64-elf) EXTRA_TARGETS="--enable-targets=arm-eabi" ;;
+	    *) EXTRA_TARGETS="" ;;
+	esac
+        log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror $EXTRA_TARGETS
         log make $PARALLEL
         log make install
         touch built.txt
