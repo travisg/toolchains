@@ -54,6 +54,8 @@ function extract-tool()
 
     TARFILE=${1}-${2}.tar$3
     TARGETDIR=${1}-${2}
+    HASH="$4"
+    PATCH="$5"
     if [ -f ${TARGETDIR}/.extracted ]; then
         log echo "$TARFILE already extracted into $TARGETDIR, skipping"
         return 0
@@ -63,13 +65,19 @@ function extract-tool()
         exit 1
     fi
 
+    echo "checking $TARFILE integrity"
+    if [ "$(sha256sum "$ARCHIVES/$TARFILE" | cut -f1 -d' ')" != "$HASH" ]; then
+      log echo "$TARFILE failed integrity check"
+      exit 1
+    fi
+
     echo extracting $TARFILE
     rm -rf $TARGETDIR
     tar xf $ARCHIVES/$TARFILE || exit 1
 
-    if [ ! -z "$4" ]; then
+    if [ -n "$PATCH" ]; then
         log echo patching $1
-        log patch -d $TARGETDIR -p1 < $4 || exit 1
+        log patch -d $TARGETDIR -p1 < "$PATCH" || exit 1
     fi
 
     touch $TARGETDIR/.extracted || exit 1
@@ -167,12 +175,12 @@ if [ "$FETCH" = "1" ]; then
 fi
 
 if [ ! -f .extracted-stamp ]; then
-    extract-tool binutils $BINVER .bz2 $PATCHES/binutils-patch.txt
-    extract-tool gcc $GCCVER .bz2 $PATCHES/gcc-patch.txt
-    extract-tool gdb $GDBVER .xz $PATCHES/gdb-patch.txt
-    extract-tool gmp $GMPVER .bz2
-    extract-tool mpc $MPCVER .gz
-    extract-tool mpfr $MPFRVER .bz2
+    extract-tool binutils $BINVER .bz2 $BINHASH $PATCHES/binutils-patch.txt
+    extract-tool gcc $GCCVER .bz2 $GCCHASH $PATCHES/gcc-patch.txt
+    extract-tool gdb $GDBVER .xz $GDBHASH $PATCHES/gdb-patch.txt
+    extract-tool gmp $GMPVER .bz2 $GMPHASH
+    extract-tool mpc $MPCVER .gz $MPCHASH
+    extract-tool mpfr $MPFRVER .bz2 $MPFRHASH
     touch .extracted-stamp
 fi
 
