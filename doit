@@ -66,7 +66,7 @@ function extract-tool()
     fi
 
     echo "checking $TARFILE integrity"
-    if [ "$(sha256sum "$ARCHIVES/$TARFILE" | cut -f1 -d' ')" != "$HASH" ]; then
+    if [ "$(shasum -a 256 -b "$ARCHIVES/$TARFILE" | cut -f1 -d' ')" != "$HASH" ]; then
       log echo "$TARFILE failed integrity check"
       exit 1
     fi

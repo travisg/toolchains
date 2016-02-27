@@ -39,12 +39,12 @@ fetch_and_verify "$GNU_MIRROR/mpfr/" "mpfr-$MPFRVER.tar.bz2"
 fetch_and_verify "$GNU_MIRROR/mpc/" "mpc-$MPCVER.tar.gz"
 fetch_and_verify "$GNU_MIRROR/gmp/" "gmp-$GMPVER.tar.bz2"
 
-BINHASH=$(sha256sum "$ARCHIVES/binutils-$BINVER.tar.bz2" | cut -f1 -d' ')
-GCCHASH=$(sha256sum "$ARCHIVES/gcc-$GCCVER.tar.bz2" | cut -f1 -d' ')
-GDBHASH=$(sha256sum "$ARCHIVES/gdb-$GDBVER.tar.xz" | cut -f1 -d' ')
-MPFRHASH=$(sha256sum "$ARCHIVES/mpfr-$MPFRVER.tar.bz2" | cut -f1 -d' ')
-MPCHASH=$(sha256sum "$ARCHIVES/mpc-$MPCVER.tar.gz" | cut -f1 -d' ')
-GMPHASH=$(sha256sum "$ARCHIVES/gmp-$GMPVER.tar.bz2" | cut -f1 -d' ')
+BINHASH=$(shasum -a 256 -b "$ARCHIVES/binutils-$BINVER.tar.bz2" | cut -f1 -d' ')
+GCCHASH=$(shasum -a 256 -b "$ARCHIVES/gcc-$GCCVER.tar.bz2" | cut -f1 -d' ')
+GDBHASH=$(shasum -a 256 -b "$ARCHIVES/gdb-$GDBVER.tar.xz" | cut -f1 -d' ')
+MPFRHASH=$(shasum -a 256 -b "$ARCHIVES/mpfr-$MPFRVER.tar.bz2" | cut -f1 -d' ')
+MPCHASH=$(shasum -a 256 -b "$ARCHIVES/mpc-$MPCVER.tar.gz" | cut -f1 -d' ')
+GMPHASH=$(shasum -a 256 -b "$ARCHIVES/gmp-$GMPVER.tar.bz2" | cut -f1 -d' ')
 
 tmp=$(mktemp)
 echo "# Rerun updatetoolvers after modifying this file" > "$tmp"
