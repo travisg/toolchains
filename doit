@@ -5,6 +5,7 @@ HOSTARCH=`uname -m`
 PARALLEL=
 FETCH=0
 QUIET=0
+STRIP=0
 GNU_MIRROR=https://mirrors.kernel.org/gnu
 ARCHIVES=archives
 PATCHES=./patches/
@@ -36,6 +37,7 @@ function help()
     echo " -h|-?                        display this help message"
     echo " -j<#>                        use <#> parallel workers to build"
     echo " -q                           make the build quieter"
+    echo " -s                           strip the binaries"
     exit 1
 }
 
@@ -108,7 +110,7 @@ if [ $# == "0" ]; then
     help
 fi
 
-while getopts a:cfhj:q? arg
+while getopts a:cfhj:qs? arg
 do
     case $arg in
         a ) ARCHES=$OPTARG ;;
@@ -116,6 +118,7 @@ do
         j ) PARALLEL="-j$OPTARG" ;;
         f ) FETCH=1 ;;
         q ) QUIET=1 ;;
+        s ) STRIP=1 ;;
         h ) help ;;
         ? ) help ;;
         * ) echo "unrecognized option '$arg'" ; exit 1 ;;
@@ -250,6 +253,14 @@ for ARCH in $ARCHES; do
         log make install
         touch built.txt
         popd
+    fi
+
+    # Optionally strip the binaries
+    if [ "${STRIP}" = "1" ]; then
+      find "${INSTALLPATH}/bin" -type f -executable -exec strip {} \;
+      for filename in $(find "${INSTALLPATH}/libexec" -type f -executable); do
+        (file "${filename}" | grep -q ELF) && strip "${filename}"
+      done
     fi
 done
 
