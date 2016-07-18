@@ -1,14 +1,36 @@
 #!/bin/sh
 
+function help()
+{
+    echo "Options"
+    echo " -h|-?                        display this help message"
+    echo " -o <dir>                     output directory"
+    exit 1
+}
+
+while getopts ho:? arg
+do
+    case $arg in
+        o ) OUTDIR=$OPTARG ;;
+        h ) help ;;
+        ? ) help ;;
+        * ) echo "unrecognized option '$arg'" ; exit 1 ;;
+    esac
+done
+
+if [ -z "$OUTDIR" ]; then
+    OUTDIR=`pwd`
+fi
+
 # load GCCVER and BINVER
 . ./toolvers
 
-rm -f build.log
-rm -rf build-*
-rm -rf gcc-$GCCVER
-rm -rf binutils-$BINVER
-rm -rf gdb-$GDBVER
-rm -rf gmp-$GMPVER
-rm -rf mpc-$MPCVER
-rm -rf mpfr-$MPFRVER
-rm -f .extracted-stamp
+rm -f $OUTDIR/build.log
+rm -rf $OUTDIR/build-*
+rm -rf $OUTDIR/gcc-$GCCVER
+rm -rf $OUTDIR/binutils-$BINVER
+rm -rf $OUTDIR/gdb-$GDBVER
+rm -rf $OUTDIR/gmp-$GMPVER
+rm -rf $OUTDIR/mpc-$MPCVER
+rm -rf $OUTDIR/mpfr-$MPFRVER
+rm -f $OUTDIR/.extracted-stamp
