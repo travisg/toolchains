@@ -7,10 +7,9 @@ FETCH=0
 QUIET=0
 STRIP=0
 GNU_MIRROR=https://mirrors.kernel.org/gnu
-ARCHIVES=archives
-PATCHES=./patches/
 # Get absolute path, will spawn a subshell then exit so our pwd is retained
 SCRIPTROOT=$(cd "$(dirname $0)" && pwd)
+PATCHES=$SCRIPTROOT/patches/
 
 # Cause errors in pipes to return failure when necessary
 set -o pipefail
@@ -19,8 +18,8 @@ function err() {
     echo "doit: error during build"
     if [ "$QUIET" = "1" ]; then
         echo "doit: dumping last 50 lines of build log..."
-        echo "doit: see $SCRIPTROOT/build.log for the full details"
-        tail -50 $SCRIPTROOT/build.log
+        echo "doit: see $OUTDIR/build.log for the full details"
+        tail -50 $OUTDIR/build.log
     fi
     exit 1
 }
@@ -36,6 +35,7 @@ function help()
     echo " -f                           fetch source releases from upstream"
     echo " -h|-?                        display this help message"
     echo " -j<#>                        use <#> parallel workers to build"
+    echo " -o <dir>                     output directory"
     echo " -q                           make the build quieter"
     echo " -s                           strip the binaries"
     exit 1
@@ -44,9 +44,9 @@ function help()
 function log()
 {
     if [ "$QUIET" = "1" ]; then
-        "$@" >> $SCRIPTROOT/build.log 2>&1
+        "$@" >> $OUTDIR/build.log 2>&1
     else
-        "$@" 2>&1 | tee -a $SCRIPTROOT/build.log
+        "$@" 2>&1 | tee -a $OUTDIR/build.log
     fi
 }
 
@@ -74,6 +74,7 @@ function extract-tool()
     fi
 
     echo extracting $TARFILE
+    pushd $OUTDIR
     rm -rf $TARGETDIR
     tar xf $ARCHIVES/$TARFILE || exit 1
 
@@ -83,6 +84,7 @@ function extract-tool()
     fi
 
     touch $TARGETDIR/.extracted || exit 1
+    popd
 }
 
 if [ "$OS" = "Linux" ]; then
@@ -110,13 +112,14 @@ if [ $# == "0" ]; then
     help
 fi
 
-while getopts a:cfhj:qs? arg
+while getopts a:cfhj:o:qs? arg
 do
     case $arg in
         a ) ARCHES=$OPTARG ;;
         c ) CCACHE=1 ;;
         j ) PARALLEL="-j$OPTARG" ;;
         f ) FETCH=1 ;;
+        o ) OUTDIR=$OPTARG ;;
         q ) QUIET=1 ;;
         s ) STRIP=1 ;;
         h ) help ;;
@@ -131,6 +134,11 @@ if [ -z "$ARCHES" ]; then
     echo ie -a "arm sh"
     exit 1
 fi
+
+if [ -z "$OUTDIR" ]; then
+    OUTDIR=`pwd`
+fi
+ARCHIVES=$OUTDIR/archives
 
 if [ -z $(which makeinfo) ]; then
     echo makeinfo not found. On debian/ubuntu this is provided by the texinfo package.
@@ -177,18 +185,18 @@ if [ "$FETCH" = "1" ]; then
     fi
 fi
 
-if [ ! -f .extracted-stamp ]; then
+if [ ! -f $OUTDIR/.extracted-stamp ]; then
     extract-tool binutils $BINVER .bz2 $BINHASH $PATCHES/binutils-patch.txt
     extract-tool gcc $GCCVER .bz2 $GCCHASH $PATCHES/gcc-patch.txt
     extract-tool gdb $GDBVER .xz $GDBHASH $PATCHES/gdb-patch.txt
     extract-tool gmp $GMPVER .bz2 $GMPHASH
     extract-tool mpc $MPCVER .gz $MPCHASH
     extract-tool mpfr $MPFRVER .bz2 $MPFRHASH
-    touch .extracted-stamp
+    touch $OUTDIR/.extracted-stamp
 fi
 
 # link the last three libs into gcc
-pushd gcc-$GCCVER
+pushd $OUTDIR/gcc-$GCCVER
 ln -sf ../gmp-$GMPVER gmp
 ln -sf ../mpc-$MPCVER mpc
 ln -sf ../mpfr-$MPFRVER mpfr
@@ -202,10 +210,10 @@ for ARCH in $ARCHES; do
         TARGET=$ARCH-elf
     fi
 
-    INSTALLPATH=`pwd`/$TARGET-$GCCVER-$OS-$HOSTARCH
-    BINBUILDPATH=build-binutils-$BINVER-$ARCH-$OS-$HOSTARCH
-    GCCBUILDPATH=build-gcc-$GCCVER-$ARCH-$OS-$HOSTARCH
-    GDBBUILDPATH=build-gdb-$GDBVER-$ARCH-$OS-$HOSTARCH
+    INSTALLPATH=$OUTDIR/$TARGET-$GCCVER-$OS-$HOSTARCH
+    BINBUILDPATH=$OUTDIR/build-binutils-$BINVER-$ARCH-$OS-$HOSTARCH
+    GCCBUILDPATH=$OUTDIR/build-gcc-$GCCVER-$ARCH-$OS-$HOSTARCH
+    GDBBUILDPATH=$OUTDIR/build-gdb-$GDBVER-$ARCH-$OS-$HOSTARCH
     export PATH=$INSTALLPATH/bin:$PATH
 
     # Building Binutils
