@@ -265,8 +265,8 @@ for ARCH in $ARCHES; do
 
     # Optionally strip the binaries
     if [ "${STRIP}" = "1" ]; then
-      find "${INSTALLPATH}/bin" -type f -executable -exec strip {} \;
-      for filename in $(find "${INSTALLPATH}/libexec" -type f -executable); do
+      find "${INSTALLPATH}/bin" -type f -exec strip {} \;
+      for filename in $(find "${INSTALLPATH}/libexec" -type f); do
         (file "${filename}" | grep -q ELF) && strip "${filename}"
       done
     fi
