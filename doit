@@ -87,24 +87,25 @@ function extract-tool()
     popd
 }
 
+MAKE=make
 if [ "$OS" = "Linux" ]; then
     COUNT=`grep processor /proc/cpuinfo | wc -l`
     PARALLEL=-j`expr $COUNT + $COUNT`
 fi
 if [ "$OS" = "Darwin" ]; then
+    PARALLEL=-j`sysctl -n hw.ncpu`
     export CPPFLAGS=-I/opt/local/include
     export LDFLAGS=-L/opt/local/lib
     export CXXFLAGS="-fbracket-depth=1024"
 fi
 if [ "$OS" = "FreeBSD" ]; then
+    PARALLEL=-j`sysctl -n hw.ncpu`
     export CPPFLAGS=-I/usr/local/include
     export LDFLAGS=-L/usr/local/lib
     export CXXFLAGS="-fbracket-depth=1024"
-fi
-MAKE=make
-if [ "$OS" = "FreeBSD" ]; then
     MAKE=gmake
 fi
+
 if [ "$HOSTARCH" = "amd64" ]; then
     HOSTARCH=x86_64
 fi
