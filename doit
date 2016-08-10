@@ -99,6 +99,7 @@ fi
 if [ "$OS" = "FreeBSD" ]; then
     export CPPFLAGS=-I/usr/local/include
     export LDFLAGS=-L/usr/local/lib
+    export CXXFLAGS="-fbracket-depth=1024"
 fi
 MAKE=make
 if [ "$OS" = "FreeBSD" ]; then
@@ -186,7 +187,7 @@ if [ "$FETCH" = "1" ]; then
 fi
 
 if [ ! -f $OUTDIR/.extracted-stamp ]; then
-    extract-tool binutils $BINVER .bz2 $BINHASH $PATCHES/binutils-patch.txt
+    extract-tool binutils $BINVER .bz2 $BINHASH
     extract-tool gcc $GCCVER .bz2 $GCCHASH $PATCHES/gcc-patch.txt
     extract-tool gdb $GDBVER .xz $GDBHASH $PATCHES/gdb-patch.txt
     extract-tool gmp $GMPVER .bz2 $GMPHASH
