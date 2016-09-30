@@ -94,14 +94,10 @@ if [ "$OS" = "Linux" ]; then
 fi
 if [ "$OS" = "Darwin" ]; then
     PARALLEL=-j`sysctl -n hw.ncpu`
-    export CPPFLAGS=-I/opt/local/include
-    export LDFLAGS=-L/opt/local/lib
     export CXXFLAGS="-fbracket-depth=1024"
 fi
 if [ "$OS" = "FreeBSD" ]; then
     PARALLEL=-j`sysctl -n hw.ncpu`
-    export CPPFLAGS=-I/usr/local/include
-    export LDFLAGS=-L/usr/local/lib
     export CXXFLAGS="-fbracket-depth=1024"
     MAKE=gmake
 fi
