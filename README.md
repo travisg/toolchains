@@ -1,5 +1,5 @@
-# toolchains
-Shell script to build gcc for various architectures
+# GCC toolchain generator script
+Shell script to build plain elf gcc toolchains for various architectures
 
 ### Sample run:
 `./doit -f -a "i386 x86_64 aarch64"`
