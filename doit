@@ -163,7 +163,7 @@ if [ "$FETCH" = "1" ]; then
     fi
     if [ ! -f $ARCHIVES/gcc-$GCCVER.tar.bz2 ]; then
         echo fetching gcc-$GCCVER
-        log wget -P $ARCHIVES -N $GNU_MIRROR/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.bz2
+        log wget -P $ARCHIVES -N $GNU_MIRROR/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.xz
     fi
     if [ ! -f $ARCHIVES/gdb-$GDBVER.tar.xz ]; then
         echo fetching gdb-$GDBVER
@@ -185,7 +185,7 @@ fi
 
 if [ ! -f $OUTDIR/.extracted-stamp ]; then
     extract-tool binutils $BINVER .bz2 $BINHASH
-    extract-tool gcc $GCCVER .bz2 $GCCHASH $PATCHES/gcc-patch.txt
+    extract-tool gcc $GCCVER .xz $GCCHASH $PATCHES/gcc-patch.txt
     extract-tool gdb $GDBVER .xz $GDBHASH $PATCHES/gdb-patch.txt
     extract-tool gmp $GMPVER .bz2 $GMPHASH
     extract-tool mpc $MPCVER .gz $MPCHASH

@@ -33,14 +33,14 @@ function fetch_and_verify() {
 
 
 fetch_and_verify "$GNU_MIRROR/binutils/" "binutils-$BINVER.tar.bz2"
-fetch_and_verify "$GNU_MIRROR/gcc/gcc-$GCCVER/" "gcc-$GCCVER.tar.bz2"
+fetch_and_verify "$GNU_MIRROR/gcc/gcc-$GCCVER/" "gcc-$GCCVER.tar.xz"
 fetch_and_verify "$GNU_MIRROR/gdb/" "gdb-$GDBVER.tar.xz"
 fetch_and_verify "$GNU_MIRROR/mpfr/" "mpfr-$MPFRVER.tar.bz2"
 fetch_and_verify "$GNU_MIRROR/mpc/" "mpc-$MPCVER.tar.gz"
 fetch_and_verify "$GNU_MIRROR/gmp/" "gmp-$GMPVER.tar.bz2"
 
 BINHASH=$(shasum -a 256 -b "$ARCHIVES/binutils-$BINVER.tar.bz2" | cut -f1 -d' ')
-GCCHASH=$(shasum -a 256 -b "$ARCHIVES/gcc-$GCCVER.tar.bz2" | cut -f1 -d' ')
+GCCHASH=$(shasum -a 256 -b "$ARCHIVES/gcc-$GCCVER.tar.xz" | cut -f1 -d' ')
 GDBHASH=$(shasum -a 256 -b "$ARCHIVES/gdb-$GDBVER.tar.xz" | cut -f1 -d' ')
 MPFRHASH=$(shasum -a 256 -b "$ARCHIVES/mpfr-$MPFRVER.tar.bz2" | cut -f1 -d' ')
 MPCHASH=$(shasum -a 256 -b "$ARCHIVES/mpc-$MPCVER.tar.gz" | cut -f1 -d' ')
