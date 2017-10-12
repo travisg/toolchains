@@ -94,11 +94,11 @@ if [ "$OS" = "Linux" ]; then
 fi
 if [ "$OS" = "Darwin" ]; then
     PARALLEL=-j`sysctl -n hw.ncpu`
-    export CXXFLAGS="-fbracket-depth=1024"
+    export CXXFLAGS="-fbracket-depth=1024 -O2"
 fi
 if [ "$OS" = "FreeBSD" ]; then
     PARALLEL=-j`sysctl -n hw.ncpu`
-    export CXXFLAGS="-fbracket-depth=1024"
+    export CXXFLAGS="-fbracket-depth=1024 -O2"
     MAKE=gmake
 fi
 
@@ -255,8 +255,8 @@ for ARCH in $ARCHES; do
         mkdir -p $GDBBUILDPATH
         pushd $GDBBUILDPATH
         log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror $EXTRA_TARGETS
-        log make $PARALLEL
-        log make install
+        log $MAKE $PARALLEL
+        log $MAKE install
         touch built.txt
         popd
     fi
