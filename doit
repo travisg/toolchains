@@ -50,6 +50,23 @@ function log()
     fi
 }
 
+function download-archive()
+{
+    local name="$1"
+    local ver="$2"
+    local ext="$3"
+	local subdir="$4"
+
+    local filename="$name-$ver.tar.$ext"
+
+    if [ ! -f "$ARCHIVES/$filename" ]; then
+       echo "fetching $name-$ver"
+       log wget -P "$ARCHIVES" -N "$GNU_MIRROR/$name/$subdir$filename"
+    else
+       log echo "$filename already downloaded, skipping"
+    fi
+}
+
 function extract-tool()
 {
     #echo "extract-tool " $1 $2 $3 $4
@@ -157,30 +174,12 @@ log echo "ARCHES='$ARCHES' PARALLEL='$PARALLEL' FETCH='$FETCH' CCACHE='$CCACHE'"
 . toolvers
 
 if [ "$FETCH" = "1" ]; then
-    if [ ! -f $ARCHIVES/binutils-$BINVER.tar.bz2 ]; then
-       echo fetching binutils-$BINVER
-       log wget -P $ARCHIVES -N $GNU_MIRROR/binutils/binutils-$BINVER.tar.bz2
-    fi
-    if [ ! -f $ARCHIVES/gcc-$GCCVER.tar.bz2 ]; then
-        echo fetching gcc-$GCCVER
-        log wget -P $ARCHIVES -N $GNU_MIRROR/gcc/gcc-$GCCVER/gcc-$GCCVER.tar.xz
-    fi
-    if [ ! -f $ARCHIVES/gdb-$GDBVER.tar.xz ]; then
-        echo fetching gdb-$GDBVER
-        log wget -P $ARCHIVES -N $GNU_MIRROR/gdb/gdb-$GDBVER.tar.xz
-    fi
-    if [ ! -f $ARCHIVES/mpfr-$MPFRVER.tar.bz2 ]; then
-        echo fetching mpfr-$MPFRVER
-        log wget -P $ARCHIVES -N $GNU_MIRROR/mpfr/mpfr-$MPFRVER.tar.bz2
-    fi
-    if [ ! -f $ARCHIVES/mpc-$MPCVER.tar.gz ]; then
-        echo fetching mpc-$MPCVER
-        log wget -P $ARCHIVES -N $GNU_MIRROR/mpc/mpc-$MPCVER.tar.gz
-    fi
-    if [ ! -f $ARCHIVES/gmp-$GMPVER.tar.bz2 ]; then
-        echo fetching gmp-$GMPVER
-        log wget -P $ARCHIVES -N $GNU_MIRROR/gmp/gmp-$GMPVER.tar.bz2
-    fi
+    download-archive binutils $BINVER bz2
+    download-archive gcc $GCCVER xz "gcc-$GCCVER/"
+    download-archive gdb $GDBVER xz
+    download-archive mpfr $MPFRVER bz2
+    download-archive mpc $MPCVER gz
+    download-archive gmp $GMPVER bz2
 fi
 
 if [ ! -f $OUTDIR/.extracted-stamp ]; then
