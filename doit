@@ -50,6 +50,10 @@ function log()
     fi
 }
 
+function full-path {
+    readlink -f "$1"
+}
+
 function extract-tool()
 {
     #echo "extract-tool " $1 $2 $3 $4
@@ -117,7 +121,7 @@ do
         c ) CCACHE=1 ;;
         j ) PARALLEL="-j$OPTARG" ;;
         f ) FETCH=1 ;;
-        o ) OUTDIR=$OPTARG ;;
+        o ) OUTDIR="$(full-path "$OPTARG")" ;;
         q ) QUIET=1 ;;
         s ) STRIP=1 ;;
         h ) help ;;
@@ -135,6 +139,8 @@ fi
 
 if [ -z "$OUTDIR" ]; then
     OUTDIR=`pwd`
+else
+	mkdir -p "$OUTDIR"
 fi
 ARCHIVES=$OUTDIR/archives
 
