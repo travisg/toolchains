@@ -55,7 +55,7 @@ function download-archive()
     local name="$1"
     local ver="$2"
     local ext="$3"
-	local subdir="$4"
+    local subdir="$4"
 
     local filename="$name-$ver.tar.$ext"
 
