@@ -68,7 +68,10 @@ function download-archive()
 }
 
 function full-path {
-    readlink -f "$1"
+    case "$1" in
+        [!/]*) echo "$PWD/$1" ;;
+        *) echo "$1" ;;
+    esac
 }
 
 function extract-tool()
@@ -138,7 +141,7 @@ do
         c ) CCACHE=1 ;;
         j ) PARALLEL="-j$OPTARG" ;;
         f ) FETCH=1 ;;
-        o ) OUTDIR="$(full-path "$OPTARG")" ;;
+        o ) OUTDIR="$OPTARG" ;;
         q ) QUIET=1 ;;
         s ) STRIP=1 ;;
         h ) help ;;
@@ -157,7 +160,11 @@ fi
 if [ -z "$OUTDIR" ]; then
     OUTDIR=`pwd`
 else
-	mkdir -p "$OUTDIR"
+    if ! mkdir -p -- "$OUTDIR"; then
+        log echo Unable to create output directory "$OUTDIR"
+        exit 1
+	fi
+    OUTDIR="$(full-path "$OUTDIR")"
 fi
 ARCHIVES=$OUTDIR/archives
 
