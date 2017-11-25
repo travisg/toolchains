@@ -1,1 +1,4 @@
 archives
+.extracted-stamp
+build.log
+build-*
