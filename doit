@@ -6,6 +6,7 @@ PARALLEL=
 FETCH=0
 QUIET=0
 STRIP=0
+GDB=1
 GNU_MIRROR=https://mirrors.kernel.org/gnu
 # Get absolute path, will spawn a subshell then exit so our pwd is retained
 SCRIPTROOT=$(cd "$(dirname $0)" && pwd)
@@ -33,6 +34,7 @@ function help()
     echo "    example: -a 'arm' or -a 'arm i386 x86_64' for multiple"
     echo " -c                           use compilation cache (ccache must be installed)"
     echo " -f                           fetch source releases from upstream"
+    echo " -g                           do not build GDB (not supported on some architectures)"
     echo " -h|-?                        display this help message"
     echo " -j<#>                        use <#> parallel workers to build"
     echo " -o <dir>                     output directory"
@@ -134,13 +136,14 @@ if [ $# == "0" ]; then
     help
 fi
 
-while getopts a:cfhj:o:qs? arg
+while getopts a:cfghj:o:qs? arg
 do
     case $arg in
         a ) ARCHES=$OPTARG ;;
         c ) CCACHE=1 ;;
-        j ) PARALLEL="-j$OPTARG" ;;
         f ) FETCH=1 ;;
+        g ) GDB=0 ;;
+        j ) PARALLEL="-j$OPTARG" ;;
         o ) OUTDIR="$OPTARG" ;;
         q ) QUIET=1 ;;
         s ) STRIP=1 ;;
@@ -257,20 +260,22 @@ for ARCH in $ARCHES; do
         popd
     fi
 
-    if [ ! -f $GDBBUILDPATH/built.txt ]; then
-        case "$TARGET" in
-            aarch64-elf) EXTRA_TARGETS="--enable-targets=arm-eabi" ;;
-            *) EXTRA_TARGETS="" ;;
-        esac
+    if (( $GDB )); then
+        if [ ! -f $GDBBUILDPATH/built.txt ]; then
+            case "$TARGET" in
+                aarch64-elf) EXTRA_TARGETS="--enable-targets=arm-eabi" ;;
+                *) EXTRA_TARGETS="" ;;
+            esac
 
-        echo building gdb
-        mkdir -p $GDBBUILDPATH
-        pushd $GDBBUILDPATH
-        log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror $EXTRA_TARGETS
-        log $MAKE $PARALLEL
-        log $MAKE install
-        touch built.txt
-        popd
+            echo building gdb
+            mkdir -p $GDBBUILDPATH
+            pushd $GDBBUILDPATH
+            log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror $EXTRA_TARGETS
+            log $MAKE $PARALLEL
+            log $MAKE install
+            touch built.txt
+            popd
+        fi
     fi
 
     # Optionally strip the binaries
