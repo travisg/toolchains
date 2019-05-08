@@ -217,11 +217,11 @@ popd
 
 for ARCH in $ARCHES; do
     echo building for arch \"$ARCH\"
-    if [ "$ARCH" == "arm" ]; then
-        TARGET=arm-eabi
-    else
-        TARGET=$ARCH-elf
-    fi
+    case $ARCH in
+        arm) TARGET=arm-eabi;;
+        pdp11) TARGET=pdp11-aout;;
+        *) TARGET=$ARCH-elf;;
+    esac
 
     INSTALLPATH=$OUTDIR/$TARGET-$GCCVER-$OS-$HOSTARCH
     BINBUILDPATH=$OUTDIR/build-binutils-$BINVER-$ARCH-$OS-$HOSTARCH
