@@ -1,69 +1,6 @@
-diff -durN gcc-7.4.0/gcc/config/arm/t-arm-elf gcc-7.4.0.patched/gcc/config/arm/t-arm-elf
---- gcc-7.4.0/gcc/config/arm/t-arm-elf	2017-01-01 04:07:43.905435000 -0800
-+++ gcc-7.4.0.patched/gcc/config/arm/t-arm-elf	2019-11-02 15:32:31.855001792 -0700
-@@ -25,22 +25,36 @@
- #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
- #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
- 
--#MULTILIB_OPTIONS      += march=armv7
--#MULTILIB_DIRNAMES     += thumb2
--#MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
--#MULTILIB_MATCHES      += march?armv7=march?armv7-a
--#MULTILIB_MATCHES      += march?armv7=march?armv7-r
--#MULTILIB_MATCHES      += march?armv7=march?armv7-m
--#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
--#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
--#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
-+# build a bunch of specialized versions of libcc for particular cores
-+#MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/mcpu=cortex-a8/cortex-a9/march=armv4t/march=armv5t/march=armv5te/march=armv6/march=armv6j/march=armv6k/march=armv6z/march=armv6zk/march=armv7-a/march=armv7-r
-+#MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore cortex-a8 cortex-a9 cortex-m3 armv4t armv5t armv5te armv6 armv6j armv6k armv6z armv6zk armv7-a armv7-r
-+#MULTILIB_OPTIONS    += mcpu=arm7tdmi/mcpu=arm9tdmi/mcpu=arm920t/mcpu=arm926ej-s/mcpu=arm1136j-s/mcpu=arm1136jf-s/mcpu=arm1176jz-s/mcpu=arm1176jzf-s/mcpu=xscale/mcpu=mpcore/mcpu=cortex-a8/mcpu=cortex-a9
-+#MULTILIB_DIRNAMES   += arm7tdmi arm9tdmi arm920t arm926ej-s arm1136j-s arm1136jf-s arm1176jz-s arm1176jzf-s xscale mpcore cortex-a8 cortex-a9
-+
-+MULTILIB_OPTIONS      += march=armv7
-+MULTILIB_DIRNAMES     += thumb2
-+MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
-+MULTILIB_MATCHES      += march?armv7=march?armv7-a
-+MULTILIB_MATCHES      += march?armv7=march?armv7-r
-+MULTILIB_MATCHES      += march?armv7=march?armv7-m
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a15
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a9
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m4
-+MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
-+
-+#MULTILIB_OPTIONS      += mfpu=vfp
-+#MULTILIB_DIRNAMES     += vfp
-+#MULTILIB_MATCHES      += mfpu?vfp=mcpu?arm1136jf-s
-+#MULTILIB_MATCHES      += mfpu?vfp=mcpu?arm1136jzf-s
- 
- # Not quite true.  We can support hard-vfp calling in Thumb2, but how do we
- # express that here?  Also, we really need architecture v5e or later
- # (mcrr etc).
--MULTILIB_OPTIONS       += mfloat-abi=hard
--MULTILIB_DIRNAMES      += fpu
--MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
-+#MULTILIB_OPTIONS       += mfloat-abi=hard
-+#MULTILIB_DIRNAMES      += fpu
-+#MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
- #MULTILIB_EXCEPTIONS    += *mcpu=fa526/*mfloat-abi=hard*
- #MULTILIB_EXCEPTIONS    += *mcpu=fa626/*mfloat-abi=hard*
- 
-@@ -56,8 +70,8 @@
- # MULTILIB_DIRNAMES   += fpu soft
- # MULTILIB_EXCEPTIONS += *mthumb/*mfloat-abi=hard*
- # 
--# MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
--# MULTILIB_DIRNAMES   += normal interwork
-+MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
-+MULTILIB_DIRNAMES   += normal interwork
- # 
- # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
- # MULTILIB_DIRNAMES   += elf under
-diff -durN gcc-7.4.0/gcc/config/i386/t-x86_64-elf gcc-7.4.0.patched/gcc/config/i386/t-x86_64-elf
---- gcc-7.4.0/gcc/config/i386/t-x86_64-elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc-7.4.0.patched/gcc/config/i386/t-x86_64-elf	2019-11-02 15:32:31.855001792 -0700
+diff -durN gcc-6.2.0/gcc/config/i386/t-x86_64-elf gcc-6.2.0.patched/gcc/config/i386/t-x86_64-elf
+--- gcc-6.2.0/gcc/config/i386/t-x86_64-elf	1969-12-31 16:00:00.000000000 -0800
++++ gcc-6.2.0.patched/gcc/config/i386/t-x86_64-elf	2016-09-30 11:55:53.602700086 -0700
 @@ -0,0 +1,7 @@
 +# Add redzoneless libgcc
 +MULTILIB_OPTIONS  += mno-red-zone
@@ -97,3 +34,47 @@ diff -durN gcc-7.4.0/gcc/config.gcc gcc-7.4.0.patched/gcc/config.gcc
  	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
  	;;
  x86_64-*-rtems*)
+diff -durN gcc-8.3.0-orig/gcc/config/arm/t-arm-elf gcc-8.3.0/gcc/config/arm/t-arm-elf
+--- gcc-8.3.0-orig/gcc/config/arm/t-arm-elf	2019-03-22 00:09:05.556706492 -0700
++++ gcc-8.3.0/gcc/config/arm/t-arm-elf	2019-05-07 22:42:28.855600499 -0700
+@@ -62,9 +62,14 @@
+ MULTILIB_REUSE	     =
+ 
+ # PART 2 - multilib build rules
+-
+-MULTILIB_OPTIONS     += marm/mthumb
+-MULTILIB_DIRNAMES    += arm thumb
++#
++# Before applying the MULTILIB_REQUIRED rules, this would build all
++# permutations of arm xor thumb with march=armv7 and mthumb-interwork
++#
++# Thanks to MULTILIB_REQUIRED, only the exact combination specified
++# are built, drastically shortening build time.
++MULTILIB_OPTIONS     += marm/mthumb march=armv7 mthumb-interwork
++MULTILIB_DIRNAMES    += arm thumb thumb2 interwork
+ 
+ MULTILIB_OPTIONS     += mfpu=auto
+ MULTILIB_DIRNAMES    += autofp
+@@ -75,8 +80,21 @@
+ MULTILIB_OPTIONS     += mfloat-abi=hard
+ MULTILIB_DIRNAMES    += fpu
+ 
+-# Build a total of 4 library variants (base options plus the following):
++# We now build 8 total libc.a, the 3 listed above and the 5 listed
++# here.
+ MULTILIB_REQUIRED    += mthumb
++MULTILIB_REQUIRED    += mthumb-interwork
++MULTILIB_REQUIRED    += mthumb/march=armv7
++MULTILIB_REQUIRED    += mthumb/mthumb-interwork
++MULTILIB_REQUIRED    += mthumb/march=armv7/mthumb-interwork
++
++# Add explicit matches for some interesting mcpu tunings to make sure
++# they get mapped to the correct march
++MULTILIB_MATCHES     += march?armv6-m=mcpu?cortex-m0
++MULTILIB_MATCHES     += march?armv7=mcpu?cortex-m3
++MULTILIB_MATCHES     += march?armv7=mcpu?cortex-m4
++MULTILIB_MATCHES     += march?armv7=mcpu?cortex-m7
++
+ MULTILIB_REQUIRED    += marm/mfpu=auto/march=armv5te+fp/mfloat-abi=hard
+ MULTILIB_REQUIRED    += mthumb/mfpu=auto/march=armv7+fp/mfloat-abi=hard
+ 
