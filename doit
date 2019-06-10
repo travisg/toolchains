@@ -190,21 +190,21 @@ log echo "ARCHES='$ARCHES' PARALLEL='$PARALLEL' FETCH='$FETCH' CCACHE='$CCACHE'"
 . toolvers
 
 if [ "$FETCH" = "1" ]; then
-    download-archive binutils $BINVER bz2
+    download-archive binutils $BINVER xz
     download-archive gcc $GCCVER xz "gcc-$GCCVER/"
     download-archive gdb $GDBVER xz
-    download-archive mpfr $MPFRVER bz2
+    download-archive gmp $GMPVER xz
     download-archive mpc $MPCVER gz
-    download-archive gmp $GMPVER bz2
+    download-archive mpfr $MPFRVER xz
 fi
 
 if [ ! -f $OUTDIR/.extracted-stamp ]; then
-    extract-tool binutils $BINVER .bz2 $BINHASH
+    extract-tool binutils $BINVER .xz $BINHASH
     extract-tool gcc $GCCVER .xz $GCCHASH $PATCHES/gcc-patch.txt
     extract-tool gdb $GDBVER .xz $GDBHASH $PATCHES/gdb-patch.txt
-    extract-tool gmp $GMPVER .bz2 $GMPHASH
+    extract-tool gmp $GMPVER .xz $GMPHASH
     extract-tool mpc $MPCVER .gz $MPCHASH
-    extract-tool mpfr $MPFRVER .bz2 $MPFRHASH
+    extract-tool mpfr $MPFRVER .xz $MPFRHASH
     touch $OUTDIR/.extracted-stamp
 fi
 

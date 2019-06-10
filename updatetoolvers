@@ -5,13 +5,14 @@
 ARCHIVES=archives
 GNU_MIRROR=https://mirrors.kernel.org/gnu
 TOOLVERS_FILE="toolvers"
+KEYRING_FILE=./gnu-keyring.gpg
 . "$TOOLVERS_FILE"
 
 function verify_sig() {
   SIGFILE="$1"
   ARCHIVE="$2"
 
-  if ! gpg -q --verify "$SIGFILE" "$ARCHIVE"; then
+  if ! gpg -q --verify --keyring "$KEYRING_FILE" "$SIGFILE" "$ARCHIVE"; then
     echo "Failed to verify $ARCHIVE, aborting"
     exit 1
   fi
@@ -32,19 +33,19 @@ function fetch_and_verify() {
 }
 
 
-fetch_and_verify "$GNU_MIRROR/binutils/" "binutils-$BINVER.tar.bz2"
+fetch_and_verify "$GNU_MIRROR/binutils/" "binutils-$BINVER.tar.xz"
 fetch_and_verify "$GNU_MIRROR/gcc/gcc-$GCCVER/" "gcc-$GCCVER.tar.xz"
 fetch_and_verify "$GNU_MIRROR/gdb/" "gdb-$GDBVER.tar.xz"
-fetch_and_verify "$GNU_MIRROR/mpfr/" "mpfr-$MPFRVER.tar.bz2"
+fetch_and_verify "$GNU_MIRROR/gmp/" "gmp-$GMPVER.tar.xz"
 fetch_and_verify "$GNU_MIRROR/mpc/" "mpc-$MPCVER.tar.gz"
-fetch_and_verify "$GNU_MIRROR/gmp/" "gmp-$GMPVER.tar.bz2"
+fetch_and_verify "$GNU_MIRROR/mpfr/" "mpfr-$MPFRVER.tar.xz"
 
-BINHASH=$(shasum -a 256 -b "$ARCHIVES/binutils-$BINVER.tar.bz2" | cut -f1 -d' ')
+BINHASH=$(shasum -a 256 -b "$ARCHIVES/binutils-$BINVER.tar.xz" | cut -f1 -d' ')
 GCCHASH=$(shasum -a 256 -b "$ARCHIVES/gcc-$GCCVER.tar.xz" | cut -f1 -d' ')
 GDBHASH=$(shasum -a 256 -b "$ARCHIVES/gdb-$GDBVER.tar.xz" | cut -f1 -d' ')
-MPFRHASH=$(shasum -a 256 -b "$ARCHIVES/mpfr-$MPFRVER.tar.bz2" | cut -f1 -d' ')
+GMPHASH=$(shasum -a 256 -b "$ARCHIVES/gmp-$GMPVER.tar.xz" | cut -f1 -d' ')
 MPCHASH=$(shasum -a 256 -b "$ARCHIVES/mpc-$MPCVER.tar.gz" | cut -f1 -d' ')
-GMPHASH=$(shasum -a 256 -b "$ARCHIVES/gmp-$GMPVER.tar.bz2" | cut -f1 -d' ')
+MPFRHASH=$(shasum -a 256 -b "$ARCHIVES/mpfr-$MPFRVER.tar.xz" | cut -f1 -d' ')
 
 tmp=$(mktemp)
 echo "# Rerun updatetoolvers after modifying this file" > "$tmp"
