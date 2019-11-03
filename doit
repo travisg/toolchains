@@ -220,6 +220,7 @@ for ARCH in $ARCHES; do
     case $ARCH in
         arm) TARGET=arm-eabi;;
         pdp11) TARGET=pdp11-aout;;
+        vax) TARGET=vax-linux;;
         *) TARGET=$ARCH-elf;;
     esac
 
@@ -251,7 +252,7 @@ for ARCH in $ARCHES; do
 
         mkdir -p $GCCBUILDPATH
         pushd $GCCBUILDPATH
-        log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror
+        log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror --disable-shared
         log $MAKE all-gcc $PARALLEL
         log $MAKE all-target-libgcc $PARALLEL
         log $MAKE install-gcc
