@@ -246,6 +246,7 @@ for ARCH in $ARCHES; do
         echo building gcc
         ARCH_OPTIONS=
         if [ $ARCH == "arm" ]; then
+            # set a reasonable baseline cpu
             ARCH_OPTIONS="--with-cpu=arm926ej-s --with-fpu=vfp"
         fi
 
@@ -263,14 +264,15 @@ for ARCH in $ARCHES; do
     if (( $GDB )); then
         if [ ! -f $GDBBUILDPATH/built.txt ]; then
             case "$TARGET" in
-                aarch64-elf) EXTRA_TARGETS="--enable-targets=arm-eabi" ;;
-                *) EXTRA_TARGETS="" ;;
+                aarch64-elf) ARCH_OPTIONS="--enable-targets=arm-eabi" ;;
+                sparc-elf) ARCH_OPTIONS="--disable-sim" ;;
+                *) ARCH_OPTIONS="" ;;
             esac
 
             echo building gdb
             mkdir -p $GDBBUILDPATH
             pushd $GDBBUILDPATH
-            log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror $EXTRA_TARGETS
+            log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH $ARCH_OPTIONS --disable-werror
             log $MAKE $PARALLEL
             log $MAKE install
             touch built.txt

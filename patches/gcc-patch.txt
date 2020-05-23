@@ -1,43 +1,7 @@
-diff -durN gcc-6.2.0/gcc/config/i386/t-x86_64-elf gcc-6.2.0.patched/gcc/config/i386/t-x86_64-elf
---- gcc-6.2.0/gcc/config/i386/t-x86_64-elf	1969-12-31 16:00:00.000000000 -0800
-+++ gcc-6.2.0.patched/gcc/config/i386/t-x86_64-elf	2016-09-30 11:55:53.602700086 -0700
-@@ -0,0 +1,7 @@
-+# Add redzoneless libgcc
-+MULTILIB_OPTIONS  += mno-red-zone
-+MULTILIB_DIRNAMES += no-red-zone
-+
-+# Build a 32bit libgcc as well
-+MULTILIB_OPTIONS  += m32
-+MULTILIB_DIRNAMES  += 32
-diff -durN gcc-7.4.0/gcc/config/riscv/t-elf-multilib gcc-7.4.0.patched/gcc/config/riscv/t-elf-multilib
---- gcc-7.4.0/gcc/config/riscv/t-elf-multilib	2017-02-06 13:38:37.794530000 -0800
-+++ gcc-7.4.0.patched/gcc/config/riscv/t-elf-multilib	2019-11-02 15:51:54.556652490 -0700
-@@ -28,3 +28,10 @@
- march.rv32imafc/mabi.ilp32f=march.rv32imafdc/mabi.ilp32f \
- march.rv32imafc/mabi.ilp32f=march.rv32gc/mabi.ilp32f \
- march.rv64imafdc/mabi.lp64d=march.rv64gc/mabi.lp64d
-+
-+# build variants of the 64bit libgccs with mcmodel=medany flag set
-+MULTILIB_OPTIONS += mcmodel=medany
-+MULTILIB_DIRNAMES += medany
-+MULTILIB_REQUIRED += \
-+march=rv64imac/mabi=lp64/mcmodel=medany \
-+march=rv64imafdc/mabi=lp64d/mcmodel=medany
-diff -durN gcc-7.4.0/gcc/config.gcc gcc-7.4.0.patched/gcc/config.gcc
---- gcc-7.4.0/gcc/config.gcc	2018-06-21 02:36:40.653070000 -0700
-+++ gcc-7.4.0.patched/gcc/config.gcc	2019-11-02 15:32:31.859001760 -0700
-@@ -1458,6 +1458,7 @@
- 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
- 	;;
- x86_64-*-elf*)
-+	tmake_file="${tmake_file} i386/t-x86_64-elf"
- 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
- 	;;
- x86_64-*-rtems*)
-diff -durN gcc-8.3.0-orig/gcc/config/arm/t-arm-elf gcc-8.3.0/gcc/config/arm/t-arm-elf
---- gcc-8.3.0-orig/gcc/config/arm/t-arm-elf	2019-03-22 00:09:05.556706492 -0700
-+++ gcc-8.3.0/gcc/config/arm/t-arm-elf	2019-05-07 22:42:28.855600499 -0700
-@@ -62,9 +62,14 @@
+diff -durN -x '*.orig' gcc-10.1.0/gcc/config/arm/t-arm-elf gcc-10.1.0.patched/gcc/config/arm/t-arm-elf
+--- gcc-10.1.0/gcc/config/arm/t-arm-elf	2020-05-07 03:49:59.000000000 -0700
++++ gcc-10.1.0.patched/gcc/config/arm/t-arm-elf	2020-05-22 16:52:14.598493740 -0700
+@@ -63,9 +63,14 @@
  MULTILIB_REUSE	     =
  
  # PART 2 - multilib build rules
@@ -55,7 +19,7 @@ diff -durN gcc-8.3.0-orig/gcc/config/arm/t-arm-elf gcc-8.3.0/gcc/config/arm/t-ar
  
  MULTILIB_OPTIONS     += mfpu=auto
  MULTILIB_DIRNAMES    += autofp
-@@ -75,8 +80,21 @@
+@@ -76,8 +81,21 @@
  MULTILIB_OPTIONS     += mfloat-abi=hard
  MULTILIB_DIRNAMES    += fpu
  
@@ -78,3 +42,40 @@ diff -durN gcc-8.3.0-orig/gcc/config/arm/t-arm-elf gcc-8.3.0/gcc/config/arm/t-ar
  MULTILIB_REQUIRED    += marm/mfpu=auto/march=armv5te+fp/mfloat-abi=hard
  MULTILIB_REQUIRED    += mthumb/mfpu=auto/march=armv7+fp/mfloat-abi=hard
  
+diff -durN -x '*.orig' gcc-10.1.0/gcc/config/i386/t-x86_64-elf gcc-10.1.0.patched/gcc/config/i386/t-x86_64-elf
+--- gcc-10.1.0/gcc/config/i386/t-x86_64-elf	1969-12-31 16:00:00.000000000 -0800
++++ gcc-10.1.0.patched/gcc/config/i386/t-x86_64-elf	2020-05-22 16:52:14.598493740 -0700
+@@ -0,0 +1,8 @@
++# Add redzoneless libgcc
++MULTILIB_OPTIONS  += mno-red-zone
++MULTILIB_DIRNAMES += no-red-zone
++
++# Build a 32bit libgcc as well
++# NOTE: disabled for now, does not seem to build properly with gcc 10
++#MULTILIB_OPTIONS  += m32
++#MULTILIB_DIRNAMES  += 32
+diff -durN -x '*.orig' gcc-10.1.0/gcc/config/riscv/t-elf-multilib gcc-10.1.0.patched/gcc/config/riscv/t-elf-multilib
+--- gcc-10.1.0/gcc/config/riscv/t-elf-multilib	2020-05-07 03:49:59.000000000 -0700
++++ gcc-10.1.0.patched/gcc/config/riscv/t-elf-multilib	2020-05-22 16:52:14.598493740 -0700
+@@ -28,3 +28,10 @@
+ march.rv32imafc/mabi.ilp32f=march.rv32imafdc/mabi.ilp32f \
+ march.rv32imafc/mabi.ilp32f=march.rv32gc/mabi.ilp32f \
+ march.rv64imafdc/mabi.lp64d=march.rv64gc/mabi.lp64d
++
++# build variants of the 64bit libgccs with mcmodel=medany flag set
++MULTILIB_OPTIONS += mcmodel=medany
++MULTILIB_DIRNAMES += medany
++MULTILIB_REQUIRED += \
++march=rv64imac/mabi=lp64/mcmodel=medany \
++march=rv64imafdc/mabi=lp64d/mcmodel=medany
+diff -durN -x '*.orig' gcc-10.1.0/gcc/config.gcc gcc-10.1.0.patched/gcc/config.gcc
+--- gcc-10.1.0/gcc/config.gcc	2020-05-07 03:49:59.000000000 -0700
++++ gcc-10.1.0.patched/gcc/config.gcc	2020-05-22 16:52:14.598493740 -0700
+@@ -1865,6 +1865,7 @@
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h"
+ 	;;
+ x86_64-*-elf*)
++	tmake_file="${tmake_file} i386/t-x86_64-elf"
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
+ 	;;
+ x86_64-*-rtems*)
