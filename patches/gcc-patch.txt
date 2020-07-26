@@ -57,7 +57,7 @@ diff -durN -x '*.orig' gcc-10.1.0/gcc/config/i386/t-x86_64-elf gcc-10.1.0.patche
 diff -durN -x '*.orig' gcc-10.1.0/gcc/config/riscv/t-elf-multilib gcc-10.1.0.patched/gcc/config/riscv/t-elf-multilib
 --- gcc-10.1.0/gcc/config/riscv/t-elf-multilib	2020-05-07 03:49:59.000000000 -0700
 +++ gcc-10.1.0.patched/gcc/config/riscv/t-elf-multilib	2020-05-22 16:52:14.598493740 -0700
-@@ -28,3 +28,10 @@
+@@ -28,3 +28,11 @@
  march.rv32imafc/mabi.ilp32f=march.rv32imafdc/mabi.ilp32f \
  march.rv32imafc/mabi.ilp32f=march.rv32gc/mabi.ilp32f \
  march.rv64imafdc/mabi.lp64d=march.rv64gc/mabi.lp64d
@@ -68,6 +68,7 @@ diff -durN -x '*.orig' gcc-10.1.0/gcc/config/riscv/t-elf-multilib gcc-10.1.0.pat
 +MULTILIB_REQUIRED += \
 +march=rv64imac/mabi=lp64/mcmodel=medany \
 +march=rv64imafdc/mabi=lp64d/mcmodel=medany
++MULTILIB_REUSE = march.rv64imafdc/mabi.lp64d/mcmodel.medany=march.rv64gc/mabi.lp64d/mcmodel.medany
 diff -durN -x '*.orig' gcc-10.1.0/gcc/config.gcc gcc-10.1.0.patched/gcc/config.gcc
 --- gcc-10.1.0/gcc/config.gcc	2020-05-07 03:49:59.000000000 -0700
 +++ gcc-10.1.0.patched/gcc/config.gcc	2020-05-22 16:52:14.598493740 -0700
