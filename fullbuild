@@ -1,10 +1,20 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# a list of targets I generally keep around
-ARCHES="aarch64 arm i386 m68k microblaze mips nios2 powerpc riscv32 riscv64 sh sparc x86_64"
+# Build a list of a list of targets I generally keep around.
+# Comment out any that are unneeded/unwanted
+ARCHES+="aarch64 "
+ARCHES+="arm "
+ARCHES+="i386 "
+ARCHES+="m68k "
+ARCHES+="microblaze "
+ARCHES+="mips "
+ARCHES+="nios2 "
+ARCHES+="powerpc "
+ARCHES+="riscv32 "
+ARCHES+="riscv64 "
+ARCHES+="sh "
+ARCHES+="sparc "
+ARCHES+="x86_64 "
 
-./doit -f -c -s -q -a "$ARCHES"
-
-
-
+exec ./doit -f -c -s -q -a "$ARCHES"
 
