@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -x
+
+GCC=./riscv64-elf-10.2.0-Linux-x86_64/bin/riscv64-elf-gcc
+
+$GCC --print-multi-lib
+$GCC --print-libgcc -march=rv64imafdc -mcmodel=medany -mabi=lp64d
+$GCC --print-libgcc -march=rv64gc -mcmodel=medany -mabi=lp64d
+$GCC --print-libgcc -march=rv64imafdc -mabi=lp64d
+$GCC --print-libgcc -march=rv64gc -mabi=lp64d
+
+$GCC --print-libgcc -march=rv32imafdc -mabi=ilp32
+$GCC --print-libgcc -march=rv32imafdc -mabi=ilp32f
+$GCC --print-libgcc -march=rv32imafdc -mabi=ilp32d
+$GCC --print-libgcc -march=rv32imafc -mabi=ilp32
+$GCC --print-libgcc -march=rv32imafc -mabi=ilp32f
+$GCC --print-libgcc -march=rv32imafc -mabi=ilp32d
+$GCC --print-libgcc -march=rv32gc -mabi=ilp32f
+
+echo "ones i care about"
+$GCC --print-libgcc -march=rv32imac -mabi=ilp32
+$GCC --print-libgcc -march=rv32imafc -mabi=ilp32f
+$GCC --print-libgcc -march=rv32gc -mabi=ilp32d
+$GCC --print-libgcc -march=rv64imac -mabi=lp64 -mcmodel=medany
+$GCC --print-libgcc -march=rv64imafdc -mabi=lp64d -mcmodel=medany
+$GCC --print-libgcc -march=rv64gc -mabi=lp64d -mcmodel=medany
+
+GCC=./arm-eabi-10.2.0-Linux-x86_64/bin/arm-eabi-gcc
+$GCC --print-multi-lib
+
+$GCC --print-libgcc -mcpu=cortex-m0
+$GCC --print-libgcc -mcpu=cortex-m0plus
+$GCC --print-libgcc -mcpu=cortex-m1
+$GCC --print-libgcc -mcpu=cortex-m3
+$GCC --print-libgcc -mcpu=cortex-m4
+$GCC --print-libgcc -mcpu=cortex-m7
+$GCC --print-libgcc -mcpu=cortex-m23
+$GCC --print-libgcc -mcpu=cortex-m33
+$GCC --print-libgcc -mcpu=cortex-m35p
+$GCC --print-libgcc -mcpu=cortex-m55
+$GCC --print-libgcc -mcpu=cortex-a5
+$GCC --print-libgcc -mcpu=cortex-a7
+$GCC --print-libgcc -mcpu=cortex-a9
+$GCC --print-libgcc -mcpu=cortex-a15
+$GCC --print-libgcc -mcpu=cortex-a32
+$GCC --print-libgcc -mcpu=cortex-a35
+$GCC --print-libgcc -mcpu=cortex-a53
+$GCC --print-libgcc -mcpu=cortex-a55
+$GCC --print-libgcc -mcpu=cortex-a57
+$GCC --print-libgcc -mcpu=cortex-a72
+$GCC --print-libgcc -mcpu=cortex-a73
+$GCC --print-libgcc -mcpu=cortex-a75
+$GCC --print-libgcc -mcpu=cortex-a76
+$GCC --print-libgcc -mcpu=cortex-a76ae
+$GCC --print-libgcc -mcpu=cortex-a77
+$GCC --print-libgcc -mcpu=neoverse-n1
+
+$GCC --print-libgcc -mcpu=cortex-m4 -mfpu=auto -mfloat-abi=hard
+$GCC --print-libgcc -mcpu=cortex-m7 -mfpu=auto -mfloat-abi=hard
+$GCC --print-libgcc -mcpu=cortex-m33 -mfpu=auto -mfloat-abi=hard
+$GCC --print-libgcc -mcpu=cortex-m55 -mfpu=auto -mfloat-abi=hard
+
+$GCC --print-libgcc -mcpu=cortex-a5 -mfpu=auto -mfloat-abi=hard
+$GCC --print-libgcc -mcpu=cortex-a7 -mfpu=auto -mfloat-abi=hard
+$GCC --print-libgcc -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=hard
+$GCC --print-libgcc -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=soft
+$GCC --print-libgcc -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard
+$GCC --print-libgcc -mcpu=cortex-a53 -mfpu=auto -mfloat-abi=hard
+

@@ -248,8 +248,8 @@ for ARCH in $ARCHES; do
         ARCH_OPTIONS=
         case "$TARGET" in
             arm-eabi)
-                # set a reasonable baseline cpu
-                ARCH_OPTIONS="--with-cpu=arm926ej-s --with-fpu=vfp"
+                # build a very aggressive set of multi libs
+                ARCH_OPTIONS="--with-multilib-list=aprofile,rmprofile"
                 ;;
         esac
 
