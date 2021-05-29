@@ -16,5 +16,5 @@ ARCHES+="sh "
 ARCHES+="sparc "
 ARCHES+="x86_64 "
 
-exec ./doit -f -c -s -q -a "$ARCHES"
+exec ./doit -f -c -s -q -o build -a "$ARCHES"
 

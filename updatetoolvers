@@ -2,6 +2,8 @@
 # Change the version numbers in the toolvers file and then run this 
 # script to update the hashes
 
+# GNU keyring can be fetched from https://ftp.gnu.org/gnu/gnu-keyring.gpg
+
 ARCHIVES=archives
 GNU_MIRROR=https://mirrors.kernel.org/gnu
 TOOLVERS_FILE="toolvers"
