@@ -218,6 +218,7 @@ popd
 for ARCH in $ARCHES; do
     echo building for arch $ARCH
     case $ARCH in
+        alpha) TARGET=alpha-openbsd;;
         arm) TARGET=arm-eabi;;
         pdp11) TARGET=pdp11-aout;;
         *) TARGET=$ARCH-elf;;
@@ -250,6 +251,9 @@ for ARCH in $ARCHES; do
             arm-eabi)
                 # build a very aggressive set of multi libs
                 ARCH_OPTIONS="--with-multilib-list=aprofile,rmprofile"
+                ;;
+            alpha-openbsd)
+                ARCH_OPTIONS="--disable-gcov --disable-threads"
                 ;;
         esac
 
