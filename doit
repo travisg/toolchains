@@ -316,3 +316,5 @@ for ARCH in $ARCHES; do
 done
 
 echo all done
+
+# vim: ts=4 sw=4 expandtab

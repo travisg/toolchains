@@ -66,3 +66,5 @@ echo "GMPHASH=$GMPHASH" >> "$tmp"
 echo "MPCHASH=$MPCHASH" >> "$tmp"
 echo "MPFRHASH=$MPFRHASH" >> "$tmp"
 mv "$tmp" "$TOOLVERS_FILE"
+
+# vim: ts=4 sw=4 expandtab

@@ -19,3 +19,4 @@ ARCHES+="x86_64 "
 
 exec ./doit -f -c -s -q -o build -a "$ARCHES"
 
+# vim: ts=4 sw=4 expandtab

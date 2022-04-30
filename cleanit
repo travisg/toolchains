@@ -45,3 +45,5 @@ rm -rf -- "$OUTDIR"/gmp-$GMPVER
 rm -rf -- "$OUTDIR"/mpc-$MPCVER
 rm -rf -- "$OUTDIR"/mpfr-$MPFRVER
 rm -f -- "$OUTDIR"/.extracted-stamp
+
+# vim: ts=4 sw=4 expandtab

@@ -68,3 +68,4 @@ $GCC --print-libgcc -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mfloat-abi=soft
 $GCC --print-libgcc -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard
 $GCC --print-libgcc -mcpu=cortex-a53 -mfpu=auto -mfloat-abi=hard
 
+# vim: ts=4 sw=4 expandtab
