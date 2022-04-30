@@ -283,9 +283,13 @@ for ARCH in $ARCHES; do
             esac
             if [ "$OS" = "Darwin" ]; then
                 # a hack to work around gdb not wanting to find libgmp
-                # TODO: locally build and install libgmp and see if can link with that
                 export LDFLAGS="-L/usr/lib -L/opt/local/lib"
                 export CPPFLAGS="-I/usr/include -I/opt/local/include"
+            fi
+            if [ "$OS" = "FreeBSD" ]; then
+                # a hack to work around gdb not wanting to find libgmp
+                export LDFLAGS="-L/usr/lib -L/usr/local/lib"
+                export CPPFLAGS="-I/usr/include -I/usr/local/include"
             fi
 
             echo building gdb
@@ -297,10 +301,8 @@ for ARCH in $ARCHES; do
             touch built.txt
             popd > /dev/null
 
-            if [ "$OS" = "Darwin" ]; then
-                export -n LDFLAGS
-                export -n CPPFLAGS
-            fi
+            export -n LDFLAGS
+            export -n CPPFLAGS
         fi
     fi
 
