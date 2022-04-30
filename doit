@@ -78,7 +78,7 @@ function full-path {
 
 function extract-tool()
 {
-    echo "extract-tool" $1 $2 $3 $4 $5
+    #echo "extract-tool" $1 $2 $3 $4 $5
 
     local TARFILE=${1}-${2}.tar$3
     local TARGETDIR=${1}-${2}
@@ -112,6 +112,7 @@ function extract-tool()
     if [ ! -z "$5" ]; then
         local PATCHES=$(echo $5-* | sort)
         for i in $PATCHES; do
+            echo patching $1 with $i
             log echo patching $1 with $i
             log patch -d "$TARGETDIR" -p1 < "$i" || exit 1
         done
