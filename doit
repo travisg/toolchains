@@ -105,7 +105,7 @@ function extract-tool()
     fi
 
     echo extracting $TARFILE
-    pushd $OUTDIR
+    pushd $OUTDIR > /dev/null
     rm -rf -- "$TARGETDIR"
     tar xf $ARCHIVES/$TARFILE || exit 1
 
@@ -119,7 +119,7 @@ function extract-tool()
     fi
 
     touch $TARGETDIR/.extracted || exit 1
-    popd
+    popd > /dev/null
 }
 
 MAKE=make
@@ -218,11 +218,11 @@ if [ ! -f $OUTDIR/.extracted-stamp ]; then
 fi
 
 # link the last three libs into gcc
-pushd $OUTDIR/gcc-$GCCVER
+pushd $OUTDIR/gcc-$GCCVER > /dev/null
 ln -sf ../gmp-$GMPVER gmp
 ln -sf ../mpc-$MPCVER mpc
 ln -sf ../mpfr-$MPFRVER mpfr
-popd
+popd > /dev/null
 
 for ARCH in $ARCHES; do
     echo building for arch $ARCH
@@ -243,12 +243,12 @@ for ARCH in $ARCHES; do
     if [ ! -f $BINBUILDPATH/built.txt ]; then
         echo building binutils
         mkdir -p $BINBUILDPATH
-        pushd $BINBUILDPATH
+        pushd $BINBUILDPATH > /dev/null
         log ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
         log $MAKE $PARALLEL
         log $MAKE install
         touch built.txt
-        popd
+        popd > /dev/null
     fi
 
     # Building GCC
@@ -263,14 +263,14 @@ for ARCH in $ARCHES; do
         esac
 
         mkdir -p $GCCBUILDPATH
-        pushd $GCCBUILDPATH
+        pushd $GCCBUILDPATH > /dev/null
         log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror
         log $MAKE all-gcc $PARALLEL
         log $MAKE all-target-libgcc $PARALLEL
         log $MAKE install-gcc
         log $MAKE install-target-libgcc
         touch built.txt
-        popd
+        popd > /dev/null
     fi
 
     if (( $GDB )); then
@@ -283,12 +283,12 @@ for ARCH in $ARCHES; do
 
             echo building gdb
             mkdir -p $GDBBUILDPATH
-            pushd $GDBBUILDPATH
+            pushd $GDBBUILDPATH > /dev/null
             log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH $ARCH_OPTIONS --disable-werror
             log $MAKE $PARALLEL
             log $MAKE install
             touch built.txt
-            popd
+            popd > /dev/null
         fi
     fi
 
