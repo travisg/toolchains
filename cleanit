@@ -21,18 +21,27 @@ done
 if [ -z "$OUTDIR" ]; then
     OUTDIR=`pwd`
 fi
+# safety check
+if [ -z "$OUTDIR" ]; then
+    echo "error getting pwd"
+    exit 1
+fi
+if [ "$OUTDIR" == "/" ]; then
+    echo "out dir is /, aborting"
+    exit 1
+fi
 
 # load GCCVER and BINVER
 . ./toolvers
 
 set -x
 
-rm -f -- $OUTDIR/build.log
-rm -rf -- $OUTDIR/build-*
-rm -rf -- $OUTDIR/gcc-$GCCVER
-rm -rf -- $OUTDIR/binutils-$BINVER
-rm -rf -- $OUTDIR/gdb-$GDBVER
-rm -rf -- $OUTDIR/gmp-$GMPVER
-rm -rf -- $OUTDIR/mpc-$MPCVER
-rm -rf -- $OUTDIR/mpfr-$MPFRVER
-rm -f -- $OUTDIR/.extracted-stamp
+rm -f -- "$OUTDIR"/build.log
+rm -rf -- "$OUTDIR"/build-*
+rm -rf -- "$OUTDIR"/gcc-$GCCVER
+rm -rf -- "$OUTDIR"/binutils-$BINVER
+rm -rf -- "$OUTDIR"/gdb-$GDBVER
+rm -rf -- "$OUTDIR"/gmp-$GMPVER
+rm -rf -- "$OUTDIR"/mpc-$MPCVER
+rm -rf -- "$OUTDIR"/mpfr-$MPFRVER
+rm -f -- "$OUTDIR"/.extracted-stamp
