@@ -25,12 +25,14 @@ fi
 # load GCCVER and BINVER
 . ./toolvers
 
-rm -f $OUTDIR/build.log
-rm -rf $OUTDIR/build-*
-rm -rf $OUTDIR/gcc-$GCCVER
-rm -rf $OUTDIR/binutils-$BINVER
-rm -rf $OUTDIR/gdb-$GDBVER
-rm -rf $OUTDIR/gmp-$GMPVER
-rm -rf $OUTDIR/mpc-$MPCVER
-rm -rf $OUTDIR/mpfr-$MPFRVER
-rm -f $OUTDIR/.extracted-stamp
+set -x
+
+rm -f -- $OUTDIR/build.log
+rm -rf -- $OUTDIR/build-*
+rm -rf -- $OUTDIR/gcc-$GCCVER
+rm -rf -- $OUTDIR/binutils-$BINVER
+rm -rf -- $OUTDIR/gdb-$GDBVER
+rm -rf -- $OUTDIR/gmp-$GMPVER
+rm -rf -- $OUTDIR/mpc-$MPCVER
+rm -rf -- $OUTDIR/mpfr-$MPFRVER
+rm -f -- $OUTDIR/.extracted-stamp

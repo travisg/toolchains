@@ -78,12 +78,17 @@ function full-path {
 
 function extract-tool()
 {
-    #echo "extract-tool " $1 $2 $3 $4
+    echo "extract-tool" $1 $2 $3 $4 $5
 
-    TARFILE=${1}-${2}.tar$3
-    TARGETDIR=${1}-${2}
-    HASH="$4"
-    PATCH="$5"
+    local TARFILE=${1}-${2}.tar$3
+    local TARGETDIR=${1}-${2}
+    local HASH="$4"
+
+    if [ -z ${TARGETDIR} ]; then
+        log echo "error, targetdir is empty"
+        exit 1
+    fi
+
     if [ -f ${TARGETDIR}/.extracted ]; then
         log echo "$TARFILE already extracted into $TARGETDIR, skipping"
         return 0
@@ -101,12 +106,16 @@ function extract-tool()
 
     echo extracting $TARFILE
     pushd $OUTDIR
-    rm -rf $TARGETDIR
+    rm -rf -- "$TARGETDIR"
     tar xf $ARCHIVES/$TARFILE || exit 1
 
-    if [ -n "$PATCH" ]; then
-        log echo patching $1
-        log patch -d $TARGETDIR -p1 < "$PATCH" || exit 1
+    if [ ! -z "$5" ]; then
+        local PATCHES=$(echo $5-* | sort)
+        for i in $PATCHES; do
+            log echo patching $1 with $i
+            log patch -d "$TARGETDIR" -p1 < "$i" || exit 1
+        done
+
     fi
 
     touch $TARGETDIR/.extracted || exit 1
@@ -166,7 +175,7 @@ else
     if ! mkdir -p -- "$OUTDIR"; then
         log echo Unable to create output directory "$OUTDIR"
         exit 1
-	fi
+    fi
     OUTDIR="$(full-path "$OUTDIR")"
 fi
 ARCHIVES=$OUTDIR/archives
@@ -199,9 +208,9 @@ if [ "$FETCH" = "1" ]; then
 fi
 
 if [ ! -f $OUTDIR/.extracted-stamp ]; then
-    extract-tool binutils $BINVER .xz $BINHASH
-    extract-tool gcc $GCCVER .xz $GCCHASH $PATCHES/gcc-patch.txt
-    extract-tool gdb $GDBVER .xz $GDBHASH $PATCHES/gdb-patch.txt
+    extract-tool binutils $BINVER .xz $BINHASH $PATCHES/binutils-patch
+    extract-tool gcc $GCCVER .xz $GCCHASH $PATCHES/gcc-patch
+    extract-tool gdb $GDBVER .xz $GDBHASH $PATCHES/gdb-patch
     extract-tool gmp $GMPVER .xz $GMPHASH
     extract-tool mpc $MPCVER .gz $MPCHASH
     extract-tool mpfr $MPFRVER .xz $MPFRHASH
