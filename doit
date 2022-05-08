@@ -225,6 +225,9 @@ ln -sf ../mpc-$MPCVER mpc
 ln -sf ../mpfr-$MPFRVER mpfr
 popd > /dev/null
 
+# switch to the outdir to root all further activities
+pushd $OUTDIR > /dev/null
+
 for ARCH in $ARCHES; do
     echo building for arch $ARCH
     case $ARCH in
