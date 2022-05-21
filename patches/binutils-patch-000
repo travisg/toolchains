@@ -1,0 +1,21 @@
+diff -durN binutils-2.38/ld/emulparams/elf32lriscv-defs.sh binutils-2.38.patched/ld/emulparams/elf32lriscv-defs.sh
+--- binutils-2.38/ld/emulparams/elf32lriscv-defs.sh	2022-01-22 04:14:09.000000000 -0800
++++ binutils-2.38.patched/ld/emulparams/elf32lriscv-defs.sh	2022-05-21 15:53:04.857052403 -0700
+@@ -16,15 +16,8 @@
+   esac
+ fi
+ 
+-# Enable shared library support for everything except an embedded elf target.
+-case "$target" in
+-  riscv*-elf)
+-    ;;
+-  *)
+-    GENERATE_SHLIB_SCRIPT=yes
+-    GENERATE_PIE_SCRIPT=yes
+-    ;;
+-esac
++GENERATE_SHLIB_SCRIPT=yes
++GENERATE_PIE_SCRIPT=yes
+ 
+ IREL_IN_PLT=
+ TEXT_START_ADDR=0x10000
