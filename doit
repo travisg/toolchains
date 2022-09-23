@@ -7,6 +7,7 @@ FETCH=0
 QUIET=0
 STRIP=0
 GDB=1
+LTO=0
 GNU_MIRROR=https://mirrors.kernel.org/gnu
 # Get absolute path, will spawn a subshell then exit so our pwd is retained
 SCRIPTROOT=$(cd "$(dirname $0)" && pwd)
@@ -37,6 +38,7 @@ function help()
     echo " -g                           do not build GDB (not supported on some architectures)"
     echo " -h|-?                        display this help message"
     echo " -j<#>                        use <#> parallel workers to build"
+    echo " -L                           use LTO compilation"
     echo " -o <dir>                     output directory"
     echo " -q                           make the build quieter"
     echo " -s                           strip the binaries"
@@ -146,7 +148,7 @@ if [ $# == "0" ]; then
     help
 fi
 
-while getopts a:cfghj:o:qs? arg
+while getopts a:cfghj:Lo:qs? arg
 do
     case $arg in
         a ) ARCHES=$OPTARG ;;
@@ -154,6 +156,7 @@ do
         f ) FETCH=1 ;;
         g ) GDB=0 ;;
         j ) PARALLEL="-j$OPTARG" ;;
+        L ) LTO=1 ;;
         o ) OUTDIR="$OPTARG" ;;
         q ) QUIET=1 ;;
         s ) STRIP=1 ;;
@@ -186,12 +189,24 @@ if [ -z $(which makeinfo) ]; then
     exit 1
 fi
 
+# make sure we don't inherit anything from the environment
+export -n CFLAGS
+export -n CXXFLAGS
+export -n CPPFLAGS
+export -n LDFLAGS
+
 export CC="cc"
 export CXX="c++"
 
 if [ "$CCACHE" = "1" ]; then
 export CC="ccache $CC"
 export CXX="ccache $CXX"
+fi
+
+if (( $LTO )); then
+    echo using LTO
+    export CFLAGS="-flto"
+    export CXXFLAGS="-flto"
 fi
 
 log date
