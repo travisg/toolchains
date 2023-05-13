@@ -280,7 +280,7 @@ for ARCH in $ARCHES; do
     if (( $GDB )); then
         if [ ! -f $GDBBUILDPATH/built.txt ]; then
             case "$TARGET" in
-                aarch64-elf) ARCH_OPTIONS="--enable-targets=arm-eabi" ;;
+                aarch64-elf) ARCH_OPTIONS="--enable-targets=arm-eabi --disable-sim" ;;
                 sparc-elf) ARCH_OPTIONS="--disable-sim" ;;
                 *) ARCH_OPTIONS="" ;;
             esac
