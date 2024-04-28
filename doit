@@ -7,6 +7,9 @@ FETCH=0
 QUIET=0
 STRIP=0
 TRIPLET=
+BINUTILSARGS=
+GCCARGS=
+GDBARGS=
 GDB=1
 GNU_MIRROR=https://mirrors.kernel.org/gnu
 # Get absolute path, will spawn a subshell then exit so our pwd is retained
@@ -42,6 +45,9 @@ function help()
     echo " -q                           make the build quieter"
     echo " -s                           strip the binaries"
     echo " -T                           custom triple suffix to add to the architecture"
+    echo " -B                           pass custom flags to binutils configure script"
+    echo " -G                           pass custom flags to GCC configure script"
+    echo " -D                           pass custom flags to GDB configure script"
     exit 1
 }
 
@@ -148,7 +154,7 @@ if [ $# == "0" ]; then
     help
 fi
 
-while getopts a:cfghj:o:qsT:? arg
+while getopts a:cfghj:o:qsT:B:G:D:? arg
 do
     case $arg in
         a ) ARCHES=$OPTARG ;;
@@ -160,6 +166,9 @@ do
         q ) QUIET=1 ;;
         s ) STRIP=1 ;;
         T ) TRIPLET="$OPTARG" ;;
+        B ) BINUTILSARGS="$OPTARG" ;;
+        G ) GCCARGS="$OPTARG" ;;
+        D ) GDBARGS="$OPTARG" ;;
         h ) help ;;
         ? ) help ;;
         * ) echo "unrecognized option '$arg'" ; exit 1 ;;
@@ -256,7 +265,7 @@ for ARCH in $ARCHES; do
         echo building binutils
         mkdir -p $BINBUILDPATH
         pushd $BINBUILDPATH > /dev/null
-        log ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror
+        log ../binutils-$BINVER/configure --target=$TARGET --prefix=$INSTALLPATH --disable-werror $BINUTILSARGS
         log $MAKE $PARALLEL
         log $MAKE install
         touch built.txt
@@ -276,7 +285,7 @@ for ARCH in $ARCHES; do
 
         mkdir -p $GCCBUILDPATH
         pushd $GCCBUILDPATH > /dev/null
-        log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror
+        log ../gcc-$GCCVER/configure --target=$TARGET --prefix=$INSTALLPATH --enable-languages=c,c++ $ARCH_OPTIONS --disable-werror $GCCARGS
         log $MAKE all-gcc $PARALLEL
         log $MAKE all-target-libgcc $PARALLEL
         log $MAKE install-gcc
@@ -306,7 +315,7 @@ for ARCH in $ARCHES; do
             echo building gdb
             mkdir -p $GDBBUILDPATH
             pushd $GDBBUILDPATH > /dev/null
-            log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH $ARCH_OPTIONS --disable-werror
+            log ../gdb-$GDBVER/configure --target=$TARGET --prefix=$INSTALLPATH $ARCH_OPTIONS --disable-werror $GDBARGS
             log $MAKE $PARALLEL
             log $MAKE install
             touch built.txt
