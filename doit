@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-OS=`uname`
-HOSTARCH=`uname -m`
+OS="$(uname)"
+HOSTARCH="$(uname -m)"
 PARALLEL=
 FETCH=0
 QUIET=0
 STRIP=0
+TRIPLET=
 GDB=1
 GNU_MIRROR=https://mirrors.kernel.org/gnu
 # Get absolute path, will spawn a subshell then exit so our pwd is retained
@@ -40,6 +41,7 @@ function help()
     echo " -o <dir>                     output directory"
     echo " -q                           make the build quieter"
     echo " -s                           strip the binaries"
+    echo " -T                           custom triple suffix to add to the architecture"
     exit 1
 }
 
@@ -146,7 +148,7 @@ if [ $# == "0" ]; then
     help
 fi
 
-while getopts a:cfghj:o:qs? arg
+while getopts a:cfghj:o:qsT:? arg
 do
     case $arg in
         a ) ARCHES=$OPTARG ;;
@@ -157,6 +159,7 @@ do
         o ) OUTDIR="$OPTARG" ;;
         q ) QUIET=1 ;;
         s ) STRIP=1 ;;
+        T ) TRIPLET="$OPTARG" ;;
         h ) help ;;
         ? ) help ;;
         * ) echo "unrecognized option '$arg'" ; exit 1 ;;
@@ -230,11 +233,16 @@ pushd $OUTDIR > /dev/null
 
 for ARCH in $ARCHES; do
     echo building for arch $ARCH
-    case $ARCH in
-        arm) TARGET=arm-eabi;;
-        pdp11) TARGET=pdp11-aout;;
-        *) TARGET=$ARCH-elf;;
-    esac
+    if [ -n "$TRIPLET" ]
+    then
+        TARGET="$ARCH-$TRIPLET"
+    else
+        case $ARCH in
+            arm) TARGET=arm-eabi;;
+            pdp11) TARGET=pdp11-aout;;
+            *) TARGET=$ARCH-elf;;
+        esac
+    fi
     echo target triple is $TARGET
 
     INSTALLPATH=$OUTDIR/$TARGET-$GCCVER-$OS-$HOSTARCH
