@@ -249,6 +249,7 @@ for ARCH in $ARCHES; do
         case $ARCH in
             arm) TARGET=arm-eabi;;
             pdp11) TARGET=pdp11-aout;;
+            vax) TARGET=vax--netbsdelf;;
             *) TARGET=$ARCH-elf;;
         esac
     fi
@@ -280,6 +281,9 @@ for ARCH in $ARCHES; do
             arm-eabi)
                 # build a very aggressive set of multi libs
                 ARCH_OPTIONS="--with-multilib-list=aprofile,rmprofile"
+                ;;
+            vax--netbsdelf)
+                ARCH_OPTIONS="--disable-multilib --disable-nls --without-isl --enable-long-long"
                 ;;
         esac
 
