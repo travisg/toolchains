@@ -227,15 +227,22 @@ if [ ! -f $OUTDIR/.extracted-stamp ]; then
     extract-tool gmp $GMPVER .xz $GMPHASH
     extract-tool mpc $MPCVER .gz $MPCHASH
     extract-tool mpfr $MPFRVER .xz $MPFRHASH
+
+    # link the last three libs into gcc
+    pushd $OUTDIR/gcc-$GCCVER > /dev/null
+    ln -sf ../gmp-$GMPVER gmp
+    ln -sf ../mpc-$MPCVER mpc
+    ln -sf ../mpfr-$MPFRVER mpfr
+    popd > /dev/null
+
+    # link the last three libs into gdb
+    pushd $OUTDIR/gdb-$GDBVER > /dev/null
+    ln -sf ../gmp-$GMPVER gmp
+    ln -sf ../mpfr-$MPFRVER mpfr
+    popd > /dev/null
+
     touch $OUTDIR/.extracted-stamp
 fi
-
-# link the last three libs into gcc
-pushd $OUTDIR/gcc-$GCCVER > /dev/null
-ln -sf ../gmp-$GMPVER gmp
-ln -sf ../mpc-$MPCVER mpc
-ln -sf ../mpfr-$MPFRVER mpfr
-popd > /dev/null
 
 # switch to the outdir to root all further activities
 pushd $OUTDIR > /dev/null
