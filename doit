@@ -254,6 +254,7 @@ for ARCH in $ARCHES; do
         TARGET="$ARCH-$TRIPLET"
     else
         case $ARCH in
+            alpha) TARGET=alpha-netbsd;;
             arm) TARGET=arm-eabi;;
             pdp11) TARGET=pdp11-aout;;
             vax) TARGET=vax--netbsdelf;;
