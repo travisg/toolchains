@@ -2,3 +2,11 @@ archives
 .extracted-stamp
 build.log
 build-*
+build
+
+gcc-*
+gdb-*
+gmp-*
+mpc-*
+mpfr-*
+binutils-*
