@@ -229,7 +229,7 @@ if [ "$FETCH" = "1" ]; then
     download-archive gcc $GCCVER xz "gcc-$GCCVER/"
     download-archive gdb $GDBVER xz
     download-archive gmp $GMPVER xz
-    download-archive mpc $MPCVER gz
+    download-archive mpc $MPCVER xz
     download-archive mpfr $MPFRVER xz
 fi
 
@@ -238,7 +238,7 @@ if [ ! -f "$OUTDIR/.extracted-stamp" ]; then
     extract-tool gcc $GCCVER .xz $GCCHASH $PATCHES/gcc-patch
     extract-tool gdb $GDBVER .xz $GDBHASH $PATCHES/gdb-patch
     extract-tool gmp $GMPVER .xz $GMPHASH
-    extract-tool mpc $MPCVER .gz $MPCHASH
+    extract-tool mpc $MPCVER .xz $MPCHASH
     extract-tool mpfr $MPFRVER .xz $MPFRHASH
 
     # link the last three libs into gcc
